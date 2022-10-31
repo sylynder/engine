@@ -15,7 +15,7 @@ include_once ROOTPATH . 'config/config.php';
 |--------------------------------------------------------------------------
 |
  */
-include_once ENGINEPATH . 'configurator.php';
+include_once ROOTPATH . 'core/configurator.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +23,7 @@ include_once ENGINEPATH . 'configurator.php';
 |--------------------------------------------------------------------------
 |
  */
-include_once ENGINEPATH . 'modular.php';
+include_once ROOTPATH . 'core/modular.php';
 
 /*
 |--------------------------------------------------------------------------

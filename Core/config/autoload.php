@@ -50,10 +50,10 @@ require_once ROOTPATH . 'config/autoload.php';
 | These files have been autoloaded
 | to help Webby's core functionality
 |
-|  require_once ENGINEPATH.'core_loader.php';
+|  require_once ROOTPATH.'core/core_loader.php';
 |
  */
-require_once ENGINEPATH . 'core_loader.php';
+require_once ROOTPATH . 'core/core_loader.php';
 
 
 /*

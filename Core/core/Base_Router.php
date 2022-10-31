@@ -2,7 +2,7 @@
 defined('COREPATH') or exit('No direct script access allowed');
 
 /* load the MX_Router class */
-require_once ENGINEPATH . "/MX/Router.php";
+require_once ENGINEPATH . "MX/Router.php";
 
 class Base_Router extends MX_Router
 {
