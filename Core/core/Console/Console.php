@@ -28,6 +28,8 @@ class Console
 
     private const WEBBY_CLI_VERSION = '1.6.1';
 
+    private static $sylynderEngine = 'sylynder/engine';
+
     /** 
      * Grab available defined user constants
     */
@@ -256,6 +258,11 @@ class Console
             case 'run:migration':
                 static::consoleEnv();
                 static::runMigration($arg2, $arg3, $arg4);
+            break;
+            case 'update:engine':
+                static::consoleEnv();
+                $installOption = 'require ';
+                static::runSystemCommand(static::$composerCommand . $installOption . static::$sylynderEngine);
             break;
             case 'install:package':
                 static::consoleEnv();
