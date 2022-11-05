@@ -26,6 +26,8 @@ class Console
 
     private static $composerCommand = 'composer ';
 
+    private const WEBBY_CLI_VERSION = '1.6.1';
+
     /** 
      * Grab available defined user constants
     */
@@ -41,9 +43,11 @@ class Console
      */
     protected static function welcome()
     {
-        static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : static::userConstants()->WEBBY_CLI_VERSION;
+        // static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : static::userConstants()->WEBBY_CLI_VERSION;
+        
+        static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : self::WEBBY_CLI_VERSION;
 
-        return ConsoleColor::cyan("Welcome to Webby CLI") . " " . ConsoleColor::green(static::$cliversion) . "\n";
+        return ConsoleColor::cyan("Welcome to Webby PHP Framework") . " " . ConsoleColor::green(static::$cliversion) . "\n";
     }
 
     /**
