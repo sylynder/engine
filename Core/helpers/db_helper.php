@@ -63,7 +63,7 @@ if ( ! function_exists( 'use_db' ))
      *
      * @return object
      */
-    function use_db($database_name = null, $db_group = 'default')
+    function use_db($database_name = '', $db_group = 'default')
 	{
 		$db = null;
 
