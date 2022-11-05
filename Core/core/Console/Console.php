@@ -26,7 +26,7 @@ class Console
 
     private static $composerCommand = 'composer ';
 
-    private const WEBBY_CLI_VERSION = '1.6.1';
+    private const WEBBY_CLI_VERSION = '1.7.0';
 
     private static $sylynderEngine = 'sylynder/engine';
 
