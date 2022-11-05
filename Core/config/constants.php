@@ -101,7 +101,37 @@ defined('MONTH')  OR define('MONTH', 2592000);
 defined('YEAR')   OR define('YEAR', 31536000);
 defined('DECADE') OR define('DECADE', 315360000);
 
-// Define Author Name and Alias
+/*
+ |--------------------------------------------------------------------------
+ | Number Constants
+ |--------------------------------------------------------------------------
+ |
+ | Use in place of numbers between 0 to 10
+ */
+define('ZERO', 0);
+define('ONE', 1);
+define('TWO', 2);
+define('THREE', 3);
+define('FOUR', 4);
+define('FIVE', 5);
+define('SIX', 6);
+define('SEVEN', 7);
+define('EIGHT', 8);
+define('NINE', 9);
+define('TEN', 10);
+
+/*
+ * --------------------------------------------------------------------
+ * Define Webby Version
+ * --------------------------------------------------------------------
+ */
+define('WEBBY_VERSION', '1.6.1');
+
+/*
+ * --------------------------------------------------------------------
+ * Define Author Name And Alias
+ * --------------------------------------------------------------------
+ */
 define('WEBBY_AUTHOR', 'Kwame Oteng Appiah-Nti');
 define('WEBBY_AUTHOR_AKA', 'Developer Kwame');
 
