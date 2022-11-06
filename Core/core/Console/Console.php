@@ -264,6 +264,10 @@ class Console
                 $installOption = 'require ';
                 static::runSystemCommand(static::$composerCommand . $installOption . static::$sylynderEngine);
             break;
+            case 'create:jsondb':
+                static::consoleEnv();
+                static::createJsonDb($arg2, $arg3, $arg4);
+            break;
             case 'install:package':
                 static::consoleEnv();
                 $installOption = 'require ';
@@ -620,6 +624,28 @@ class Console
         }
 
         $command = static::$phpCommand . 'create/createenum/' . $name . '/' . $type;
+        static::runSystemCommand($command);
+    }
+
+    protected static function createJsonDb(...$args)
+    {
+        $name = '';
+        $type = '';
+
+        if (isset($args[0])) {
+            $name = $args[0];
+        }
+
+        $name = str_replace(['-', '='], '', $name);
+
+        if ($name === '') {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:jsondb", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        $command = static::$phpCommand . 'create/createjsondb/' . $name;
         static::runSystemCommand($command);
     }
 

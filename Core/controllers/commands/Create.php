@@ -139,6 +139,19 @@ class Create extends ConsoleController
     }
 
     /**
+     * Warning Console Output
+     *
+     * @param string $message
+     * @return void
+     */
+    private function warnOutput($message = 'Exists')
+    {
+        $output = "";
+        $output .= ConsoleColor::yellow($message);
+        echo $output . "\n";
+    }
+
+    /**
      * Success Console Output
      *
      * @param string $message
@@ -1377,6 +1390,32 @@ class Create extends ConsoleController
             $this->successOutput($migrationName . " Migration file created successfully ");
             return;
         }
+    }
+
+    public function createJsonDb($name = '')
+    {
+        $databaseName = $name;
+        $created = '';
+
+        $db = new \Base\Json\Db;
+
+        $created = $db->createDatabase($databaseName);
+        
+        if ($created === 'exists') {
+            $this->warnOutput(ucfirst($databaseName) . " Database exists already ");
+            return;
+        }
+
+        if (!$created) {
+            $this->failureOutput(ucfirst($databaseName) . " Database was not created ");
+            return;
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($databaseName) . " Database created successfully ");
+            return;
+        }
+
     }
 
 }

@@ -32,3 +32,11 @@ include_once ROOTPATH . 'core/modular.php';
 |
  */
 include_once COREPATH . 'config/migration.php';
+
+/*
+|--------------------------------------------------------------------------
+| Json Database Configuration File
+|--------------------------------------------------------------------------
+|
+ */
+include_once ROOTPATH . 'database/jsondb.php';

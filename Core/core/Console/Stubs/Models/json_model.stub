@@ -1,12 +1,7 @@
-/**
- * Make sure you have the "WebbyDb" Package
- * to be able to use this type of model
- */
+use Base\Json\Db;
+use Base\Json\Interfaces\Model;
 
-use App\Packages\WebbyDb\Db;
-use App\Packages\WebbyDb\JsonModel;
-
-class BaukModel extends Db implements JsonModel
+class {{MODEL}} extends Db implements Model
 {
     public $file = ''; // a json file name
     public $database = ''; // a folder to store json file
@@ -23,4 +18,4 @@ class BaukModel extends Db implements JsonModel
     }
 
 }
-/* End of BaukModel file */
+/* End of {{MODEL}} file */
