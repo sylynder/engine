@@ -15,7 +15,8 @@ class Help extends Console
      */
     public static function runHelp()
     {
-        Console::runSystemCommand(Console::$phpCommand . 'help');
+        // Console::runSystemCommand(Console::$phpCommand . 'help');
+        Console::runSystemCommand('php webby');
     }
 
     /**
@@ -46,6 +47,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("    Create a symlink for the resources folder in public")  . " \n";
         $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("      This enables you to access console controllers to perform cli tasks")  . " \n";
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("         Initialize your project to use git")  . " \n";
+        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("    Update sylynder engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("      Clear specific cached files")  . " \n";
 
         $output .=  " \n";
@@ -63,6 +65,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    create:rule") .  ConsoleColor::cyan("         Create a rule by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:middleware") .  ConsoleColor::cyan("   Create a middleware by specifying the name")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:enum") .  ConsoleColor::cyan("         Create an enum by specifying the name and the type e.g. --real, --fake")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:jsondb") .  ConsoleColor::cyan("       Create a json database by specifying the name")  . " \n";
 
         echo $output . "\n";
     }
@@ -671,7 +674,49 @@ class Help extends Console
         CREATEENUM;
     }
 
-    public function sample()
+    private static function update_engine()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<UPDATEENGINE
+            {$welcome}
+            {$description}
+                Update sylynder/engine for current updates.
+
+            {$usage}
+                php webby update:engine
+
+            {$examples}
+                php webby update:engine
+
+        UPDATEENGINE;
+    }
+
+    private static function create_jsondb()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CREATEJSONDB
+            {$welcome}
+            {$description}
+                Create a json database for minimal data persistence.
+
+            {$usage}
+                php webby create:jsondb <database-name>
+
+            {$examples}
+                php webby create:jsondb books
+
+        CREATEJSONDB;
+    }
+
+    private static function sample()
     {
         $welcome     = static::welcome();
         $usage       = static::hereColor('Usage:', 'yellow');
@@ -776,6 +821,12 @@ class Help extends Console
             break;
             case 'create:enum':
                 Help::create_enum();
+            break;
+            case 'update:engine':
+                Help::update_engine();
+            break;
+            case 'create:jsondb':
+                Help::create_jsondb();
             break;
             default:
                 Help::showHelp();
