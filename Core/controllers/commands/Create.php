@@ -237,7 +237,7 @@ class Create extends ConsoleController
 
         $className = basename($filePath, '.php');
 
-        $contents = "<?php \n\n";
+        $contents = ($stubType === $this->view) ? '' : "<?php \n\n";
         
         $fileContent = $this->fileContent($fileType, $className, $stubType);
         $contents .= $fileContent;
@@ -252,7 +252,8 @@ class Create extends ConsoleController
         }
 
         try {
-            $filePath = $filePath . '.php';
+
+            $filePath = ($stubType === $this->view) ? $filePath :  $filePath . '.php';
 
             $result = file_put_contents($filePath, $contents);
 
@@ -314,8 +315,10 @@ class Create extends ConsoleController
             case 'rule':
                 return str_replace('{{RULE}}', $className, $fileContent);
             break;
-            case 'plates_view':
-            case 'view':
+            case 'empty':
+            case 'php':
+            case 'plates':
+            case 'blade':
                 return $fileContent;
             break;
             case 'middleware':
@@ -1390,6 +1393,70 @@ class Create extends ConsoleController
             $this->successOutput($migrationName . " Migration file created successfully ");
             return;
         }
+    }
+
+    public function createView($location = '', $viewFile = '', $defaultType = '--empty')
+    {
+        $module = explode(':', $location);
+        $moduleName = '';
+        $moduleType = '';
+        $created = '';
+        $viewFile = str_replace('-', '/', $viewFile);
+
+        $pathinfo = (object) pathinfo($viewFile);
+
+        if (isset($module[0])) {
+            $moduleType = $module[0];
+        }
+
+        if (isset($module[1])) {
+            $moduleName = $module[1];
+        }
+
+        $moduleType = str_replace('-', '', $moduleType);
+        $moduleType = ucfirst($moduleType);
+
+        $moduleDirectory = ($moduleName) ? $this->createModuleDirectory($moduleName, $moduleType) : '';
+
+        $exists = file_exists($moduleDirectory);
+
+        if ($exists) {
+            $this->createSubDirectory($moduleDirectory, '--v');
+        }
+
+        $viewDirectory = $moduleDirectory . DS . $this->view;
+
+        if ($module[0] === 'empty') {
+            $viewDirectory = rtrim(VIEWPATH, '/');
+        }
+
+        $file = $pathinfo->basename;
+
+        $directory = $viewDirectory . DS . $pathinfo->dirname;
+
+        $filename = str_ext($file, true);
+        $extension = str_ext($file);
+
+        if (file_exists($directory . DS . $file)) {
+            $this->failureOutput($filename . $extension . " exists already in the " . ucfirst($moduleName ?? '') . " specified view directory");
+            return;
+        }
+
+        if (!is_dir($directory)) {
+            mkdir($directory, 0755, true);
+        }
+        
+        if ($viewDirectory && is_dir($viewDirectory)) {
+            $filePath = $viewDirectory . DS . $viewFile;
+            $defaultType = str_replace('-', '', $defaultType);
+            $created = $this->createFile($filePath, strtolower($defaultType), $this->view);
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($filename) . " View created successfully ");
+            return;
+        }
+
     }
 
     public function createJsonDb($name = '')
