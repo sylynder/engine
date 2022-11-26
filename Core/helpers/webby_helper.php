@@ -725,7 +725,7 @@ if ( ! function_exists('str_ext'))
             return pathinfo($filename, PATHINFO_FILENAME);
         }
 
-        return substr($filename, 0, strrpos($filename, "."));
+        return substr($filename, strrpos($filename, '.', -1), strlen($filename));
     }
 }
 
