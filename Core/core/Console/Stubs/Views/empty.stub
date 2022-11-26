@@ -1,0 +1,1 @@
+An empty view file
