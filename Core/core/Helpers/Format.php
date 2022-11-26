@@ -167,6 +167,22 @@ class Format
         return correct_datetime($datetime);
     }
 
+    /**
+     * Get human readable size
+     *
+     * @param integer|float $bytes
+     * @return string
+     */
+    public function size(int|float $bytes)
+    {
+        $i = floor( log($bytes, 1024) );
+
+        return round(
+            $bytes / pow(1024, $i), 
+            [0,0,2,2,3,3,3,3,3][$i]
+        ) . ['B','kB','MB','GB','TB','PB','EB','ZB','YB'][$i];
+    }
+
     // FORMATTING OUTPUT ---------------------------------------------------------
 
     /**
