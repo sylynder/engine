@@ -217,7 +217,7 @@ class Console
             break;
             case 'create:view':
                 static::consoleEnv();
-                // static::createView(...$arg);
+                static::createView($arg2, $arg3, $arg4);
             break;
             case 'create:service':
                 static::consoleEnv();
@@ -769,6 +769,42 @@ class Console
         $output .=  ConsoleColor::white(" Please check docs for correct syntax to use for run:migration", 'light', 'red') . " \n";
         echo $output . "\n";
         exit;
+    }
+
+    protected static function createView(...$args)
+    {
+        $view = $args;
+        $filename = '';
+        $module = '';
+
+        if (strpos($view[0], ':') !== false) {
+            $module = $view[0];
+        }
+
+        $viewType = '';
+
+        if (!empty($module) && !empty($view[1]) ) {
+            $filename = $view[1];
+        }
+
+        if (empty($module) && !empty($view[1])) {
+            $filename = $view[0];
+            $viewType = $view[1];
+        }
+
+        if (empty($module) && !empty($view[0]) ) {
+            $filename = $view[0];
+        }
+
+        if (!empty($view[2])) {
+            $viewType = $args[2];
+        }
+        
+        $filename = str_replace('/', '-', $filename);
+        $module = empty($module) ? 'empty' : $module;
+        $command = static::$phpCommand . 'create/createview/' . $module . '/' . $filename . '/' . $viewType;
+
+        static::runSystemCommand($command);
     }
 
     protected static function clearCache(...$args)
