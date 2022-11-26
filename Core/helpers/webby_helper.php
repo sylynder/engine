@@ -1274,7 +1274,7 @@ if ( ! function_exists('compare_json'))
     }
 }
 
-/* ------------------------------- Date | Time Functions ---------------------------------*/
+/* ------------------------------- Date | Time | Format Functions ---------------------------------*/
 
 
 if ( ! function_exists('timezone')) 
@@ -1370,9 +1370,9 @@ if ( ! function_exists('real_date'))
             return '';
         } else {
             if(!empty($format)) {
-                return date($format, strtotime($date));
+                return format_date($format, $date);
             } else {
-                return date('jS F, Y', strtotime($date));
+                return format_date('jS F, Y', $date);
             }
         }
     }
@@ -1395,7 +1395,7 @@ if ( ! function_exists('correct_date'))
         } elseif ($date == "0000-00-00") {
             return '';
         } else {
-            return date('Y-m-d', strtotime($date));
+            return format_date('Y-m-d', $date);
         }
     }
 }
@@ -1417,7 +1417,7 @@ if ( ! function_exists('correct_datetime'))
         } elseif ($date == "0000-00-00") {
             return '';
         } else {
-            return date('Y-m-d H:i:a', strtotime($date));
+            return format_date('Y-m-d H:i:a', $date);
         }
     }
 }
@@ -1430,15 +1430,20 @@ if ( ! function_exists('real_time'))
      * @param string $date
      * @return string
      */
-    function real_time($date)
+    function real_time($date, $withSeconds = false)
     {
         if ($date == "0000-00-00 00:00:00") {
             return '';
         } elseif ($date == "0000-00-00") {
             return '';
-        } else {
-            return date('H:i a', strtotime($date));
         }
+
+        if ($withSeconds) {
+            return format_date('H:i:s a', $date);
+        }
+        
+        return format_date('H:i a', $date);
+        
     }
 }
 
@@ -1619,6 +1624,20 @@ if ( ! function_exists('travel'))
     {
         return (new TimeTravel);
     }
+}
+
+if ( ! function_exists('format'))
+{
+	/**
+	 * Format helper function for webby
+	 *
+	 * @param string $path
+	 * @return \Base\Helpers\Format
+	 */
+	function format()
+	{
+		return new \Base\Helpers\Format;
+	}
 }
 
 /* ------------------------------- Security Functions ---------------------------------*/
