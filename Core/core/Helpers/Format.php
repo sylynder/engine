@@ -4,7 +4,7 @@
  * Format class
  * Help convert between various formats such as XML, JSON, CSV, etc.
  *
- * @author    Phil Sturgeon, Chris Kacerguis, @softwarespot
+ * @author    Phil Sturgeon, Chris Kacerguis, Kwame Oteng Appiah-Nti, @softwarespot
  * @license   http://www.dbad-license.org/
  */
 
@@ -125,6 +125,46 @@ class Format
         // return new $class();
 
         return new static($data, $from_type);
+    }
+
+    // FORMATTING DATE & TIME ---------------------------------------------------------
+    
+    /**
+     * Take date and set a custom date format
+     *
+     * @param string $format
+     * @param string $date
+     * @return string
+     */
+    public function date($format, $date)
+    {
+        return format_date($format, $date);
+    }
+
+    /**
+     * Take date and format it in Y-m-d
+     * This fixes a date and can be stored
+     * and used easily
+     * 
+     * @param string $date
+     * @return string
+     */
+    public function fixDate($date)
+    {
+        return correct_date($date);
+    }
+
+    /**
+     * Take datetime and format it in Y-m-d H:i:a
+     * This fixes a datetime and can be stored
+     * and used easily
+     *
+     * @param string $datetime
+     * @return string
+     */
+    public function fixDatetime($datetime)
+    {
+        return correct_datetime($datetime);
     }
 
     // FORMATTING OUTPUT ---------------------------------------------------------
