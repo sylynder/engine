@@ -449,6 +449,27 @@ if ( ! function_exists('route_to'))
     }
 }
 
+if ( ! function_exists('route_view')) 
+{
+    /**
+     * Return a view using 
+     * view names from routes
+     * 
+     * @param string $view The view name
+     * @return string
+     */
+    function route_view($view = '')
+    {
+        $path = trim(server('REQUEST_URI'), '/');
+
+		if (strpos($path, '/') !== false) {
+			$view = $path;
+		}
+
+        return $view;
+    }
+}
+
 if ( ! function_exists('current_route'))
 {
     /**
