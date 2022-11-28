@@ -57,6 +57,7 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    create:package") .  ConsoleColor::cyan("      Create a package by specifying which sub-directories to use e.g --mvc, --c, --m, --s")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:controller") .  ConsoleColor::cyan("   Create a controller by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:model") .  ConsoleColor::cyan("        Create a model by specifying which module it belongs with")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:view") .  ConsoleColor::cyan("         Create a view by specifying which path and file name to give or a module it belongs with.")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:service") .  ConsoleColor::cyan("      Create a service by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:action") .  ConsoleColor::cyan("       Create an action by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:library") .  ConsoleColor::cyan("      Create a library by specifying which module it belongs with")  . " \n";
@@ -492,6 +493,29 @@ class Help extends Console
         CREATEMODEL;
     }
 
+    private static function create_view()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CREATEVIEW
+            {$welcome}
+            {$description}
+                Create a view by specifying which path and file name to give or a module it belongs with.
+
+            {$usage}
+                php webby create:view <module-type:module-name> <view-file-path.extension>
+
+            {$examples}
+                php webby create:view users/list-users.php
+                php webby create:view web:app users/list-users.php
+                php webby create:view web:app users/list-user.php --plates
+
+        CREATEVIEW;
+    }
+
     private static function create_service()
     {
         $welcome     = static::welcome();
@@ -797,6 +821,9 @@ class Help extends Console
             break;
             case 'create:model':
                 Help::create_model();
+            break;
+            case 'create:view':
+                Help::create_view();
             break;
             case 'create:service':
                 Help::create_service();
