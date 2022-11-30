@@ -463,6 +463,12 @@ class Route
 			$parameterfy = true;
 		}
 
+		// If $to still contains ->|@|:: 
+		// replace them with /
+		if ( preg_match("/(->|@|::)/i", $to) ) {
+			$to = str_replace(['->', '::', '@'], ['/', '/', '/'], $to);
+		}
+
 		// Do we have a namespace?
 		if (static::$namespace) {
 			$from = static::$namespace . '/' . $from;
