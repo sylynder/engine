@@ -1432,6 +1432,11 @@ class Create extends ConsoleController
 
         $file = $pathinfo->basename;
 
+        if (!isset($pathinfo->dirname)) {
+            $this->failureOutput("Please check docs for correct syntax to create:view");
+            return;
+        }
+
         $directory = $viewDirectory . DS . $pathinfo->dirname;
 
         $filename = str_ext($file, true);
