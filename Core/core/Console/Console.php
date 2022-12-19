@@ -28,6 +28,10 @@ class Console
 
     private const WEBBY_CLI_VERSION = '1.8.0';
 
+    private const DEFAULT_HOST = "localhost";
+    
+    private const DEFAULT_PORT = 8085;
+
     private static $sylynderEngine = 'sylynder/engine';
 
     /** 
@@ -922,24 +926,49 @@ class Console
     {
         static::$rootpath = static::userConstants()->WEBBY_ROOTPATH;
         
-        $number = isset($args[3]) ? (int)$args[3] : "";
-        $project_dir = static::$rootpath; //__DIR__;
-        $dir = realpath($project_dir . '/public/');
-        $port = (isset($number) && is_int($number)) ? $number : 8085;
-        $port = intval($port);
+        $host = static::DEFAULT_HOST;
+        $port = 0;
+        $number = static::DEFAULT_PORT;
+        
+        if (isset($args[2]) && $args[2] === '--port') {
+            $number = isset($args[3]) ? (int)$args[3] : "";
+            $port = (isset($number) && is_int($number)) ? $number : static::DEFAULT_PORT;
+            $port = intval($port);
+
+        } else if ((isset($args[2]) && ($args[2] === '--host'))
+            && (isset($args[2]) && $args[4] === '--port')
+        ) {
+            
+            $host = isset($args[3]) ? (string)$args[3] : "localhost";
+            $number = isset($args[5]) ? (int)$args[5] : "";
+            $port = (isset($number) && is_int($number)) ? $number : static::DEFAULT_PORT;
+            $port = intval($port);
+
+        } else {
+            
+            $port = $number;
+            $port = intval($port);
+
+        }
 
         if ($port === 0) {
-            echo ConsoleColor::red("Please choose a valid port!") . "\n";
+            echo ConsoleColor::red("\n\tPlease choose a valid port number!\n") . "\n";
             exit;
         }
 
-        $output =  "PHP Webserver Started for Webby \n";
-        $output .= "Navigate to http://localhost:{$port} ";
-        $output .= "to view your project.\nPress Ctrl+C to stop it!";
+        $project_dir = static::$rootpath; //__DIR__;
+        $dir = realpath($project_dir . '/public/');
+
+        $output =  ConsoleColor::green("\n\tPHP Built-In Web Server Started for Webby \n\n");
+        $output .= ConsoleColor::green("\tNavigate to ");
+        $output .= ConsoleColor::cyan("http://{$host}:{$port} ");
+        $output .= ConsoleColor::green("to view your project.\n");
+        $output .= ConsoleColor::yellow("\n\tPress Ctrl+C to stop Webby Server!");
         " \n";
 
-        echo $output . "\n";
-        system('php -S localhost:' . $port . ' -t ' . $dir);
+        echo ConsoleColor::green($output) . "\n\n";
+
+        static::runSystemCommand("php -S {$host}:" . $port . " -t " . $dir);
     }
 
     /**
@@ -948,10 +977,14 @@ class Console
      * @param array $args
      * @return void
      */
-    public static function run($args): void
+    public static function run(array $args): void
     {
-
-        if (isset($args[2]) && $args[2] === '--port') {
+        if (
+            (isset($args[2]) && $args[2] === '--host') 
+                && (isset($args[4]) && $args[4] === '--port')
+        ) {
+            Console::serve($args);
+        } else if (isset($args[2]) && $args[2] === '--port' && $args[1] !== 'quit') {
             Console::serve($args);
         } else if (isset($args[1]) && $args[1] === 'serve') {
             Console::serve();
