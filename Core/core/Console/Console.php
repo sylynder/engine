@@ -972,6 +972,51 @@ class Console
     }
 
     /**
+     * Quit Webby Server
+     *
+     * @param array $args Console arguments
+     * @param integer $ttq Time given to quit server
+     * @return void
+     */
+    public static function quitServer(array $args = [], int $ttq = 10): void
+    {
+
+        $count = $ttq;
+        $port = static::DEFAULT_PORT;
+        
+        if (isset($args[3]) && $args[3] === '--port') {
+            $port = (int)$args[2];
+        }
+
+        if (isset($args[4]) && ($args[4] === '--in' || $args[4] === 'in')) {
+            $count = (int)$args[5];
+        }
+
+        echo ConsoleColor::yellow("\n\tQuitting Webby Server on Port: {$port} \n\t\t");
+        
+        while($count > 0)
+        {
+            echo ConsoleColor::yellow(".");
+            sleep(1);
+            $count--;
+        }
+
+        echo ConsoleColor::yellow("\n\tDone! \n\n");
+
+        $os = (stripos(PHP_OS, "WIN") === 0) ? "WINDOWS" : "UNIX";
+
+        static::consoleEnv();
+        
+        if ($os === "WINDOWS") {
+            exec("netstat -ano | findstr :{$port}");
+            exit;
+        }
+
+        exec("fuser -n tcp -k {$port}");
+
+    }
+
+    /**
      * Run Webby Console
      *
      * @param array $args
@@ -990,6 +1035,8 @@ class Console
             Console::serve();
         } else if (isset($args[1]) && $args[1] === 'set' && @$args[2] === '--env') {
             Console::setenv();
+        } else if (isset($args[1]) && $args[1] === 'quit') {
+            Console::quitServer($args);
         } /*else if (isset($args[1]) && $args[1] === '--help') {
             Console::showHelp();
         }*/ else if (!empty($args[1])) {
