@@ -39,16 +39,20 @@ class Help extends Console
 
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Available Commands:") . " \n";
-        $output .=  ConsoleColor::light_purple("    serve") .  ConsoleColor::cyan("            Serve your application with Webby Server")  . " \n";
-        $output .=  ConsoleColor::light_purple("    run:migration") .  ConsoleColor::cyan("    Run and manage migrations for databases")  . " \n";
-        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("      List all available routes")  . " \n";
-        $output .=  ConsoleColor::light_purple("    app:off") .  ConsoleColor::cyan("          Turn maintenance mode on")  . " \n";
-        $output .=  ConsoleColor::light_purple("    app:on") .  ConsoleColor::cyan("           Turn maintenance mode off")  . " \n";
-        $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("    Create a symlink for the resources folder in public")  . " \n";
-        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("      This enables you to access console controllers to perform cli tasks")  . " \n";
-        $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("         Initialize your project to use git")  . " \n";
-        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("    Update sylynder engine")  . " \n";
-        $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("      Clear specific cached files")  . " \n";
+        $output .=  ConsoleColor::light_purple("    serve") .  ConsoleColor::cyan("               Serve your application with Webby Server")  . " \n";
+        $output .=  ConsoleColor::light_purple("    quit") .  ConsoleColor::cyan("                Quit Webby server or specify a given port to quit server on")  . " \n";
+        $output .=  ConsoleColor::light_purple("    run:migration") .  ConsoleColor::cyan("       Run and manage migrations for databases")  . " \n";
+        $output .=  ConsoleColor::light_purple("    list:routes") .  ConsoleColor::cyan("         List all available routes")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:off") .  ConsoleColor::cyan("             Turn maintenance mode on")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:on") .  ConsoleColor::cyan("              Turn maintenance mode off")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:to-production") .  ConsoleColor::cyan("   Make application ready for production mode")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:to-testing") .  ConsoleColor::cyan("      Make application ready for testing mode")  . " \n";
+        $output .=  ConsoleColor::light_purple("    app:to-development") .  ConsoleColor::cyan("  Make application ready for development mode")  . " \n";
+        $output .=  ConsoleColor::light_purple("    resource:link") .  ConsoleColor::cyan("       Create a symlink for the resources folder in public")  . " \n";
+        $output .=  ConsoleColor::light_purple("    use:command") .  ConsoleColor::cyan("         This enables you to access console controllers to perform cli tasks")  . " \n";
+        $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
+        $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
+        $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
 
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Generator Commands:") . " \n";
@@ -82,6 +86,7 @@ class Help extends Console
             {$welcome}
             {$description}
                 The webby server for local development.
+                It uses the PHP built-in web server.
 
             {$usage}
                 php webby serve [option]
@@ -89,7 +94,35 @@ class Help extends Console
             {$examples}
                 php webby serve
                 php webby serve --port 8086
-                php webby serve --port 9000
+                php webby serve --host localhost --port 8086
+                php webby serve --host webby.local --port 8086
+
+        SERVE;
+    }
+
+    private static function quit()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<SERVE
+            {$welcome}
+            {$description}
+                Quit a webby server.
+                You can specify port number and seconds to quit server.
+
+            {$usage}
+                php webby quit [option]
+
+            {$examples}
+                php webby quit
+                php webby quit in 5
+                php webby quit --in 5
+                php webby quit --port 8009
+                php webby quit --port 8009 in 5
+                php webby quit --port 8009 --in 5
 
         SERVE;
     }
@@ -178,6 +211,7 @@ class Help extends Console
             {$welcome}
             {$description}
                 List all routes defined in your entire application.
+                Except automatic routes.
 
             {$usage}
                 php webby list:routes 
@@ -767,6 +801,9 @@ class Help extends Console
 
             case 'serve':
                 Help::serve();
+            break;
+            case 'quit':
+                Help::quit();
             break;
             case 'key:generate':
                 Help::keyGenerate();
