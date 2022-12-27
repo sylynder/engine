@@ -1398,7 +1398,7 @@ class EasyModel extends Model
      * latest function
      *
      * @param string $column
-     * @return mixed
+     * @return CI_DB_query_builder
      */
     public function latest($column = 'created_at')
     {
@@ -1409,7 +1409,7 @@ class EasyModel extends Model
      * oldest function
      *
      * @param string $column
-     * @return mixed
+     * @return CI_DB_query_builder
      */
     public function oldest($column = 'created_at')
     {
