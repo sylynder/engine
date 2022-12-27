@@ -984,8 +984,12 @@ class Console
         $count = $ttq;
         $port = static::DEFAULT_PORT;
         
-        if (isset($args[3]) && $args[3] === '--port') {
-            $port = (int)$args[2];
+        if (isset($args[2]) && $args[2] === '--port') {
+            $port = (int)$args[3];
+        }
+
+        if (isset($args[2]) && ($args[2] === '--in' || $args[2] === 'in')) {
+            $count = (int)$args[3];
         }
 
         if (isset($args[4]) && ($args[4] === '--in' || $args[4] === 'in')) {
