@@ -1395,6 +1395,28 @@ class EasyModel extends Model
     }
 
     /**
+     * latest function
+     *
+     * @param string $column
+     * @return mixed
+     */
+    public function latest($column = 'created_at')
+    {
+        return $this->orderBy($column, 'desc');
+    }
+
+    /**
+     * oldest function
+     *
+     * @param string $column
+     * @return mixed
+     */
+    public function oldest($column = 'created_at')
+    {
+        return $this->orderBy($column, 'asc');
+    }
+
+    /**
      * Limit function
      *
      * @param mixed $value
