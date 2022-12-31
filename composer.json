@@ -14,7 +14,10 @@
     "autoload": {
         "psr-4": {
             "Base\\": "Core/core"
-        }
+        },
+        "classmap": [
+            "CodeIgniter/Framework"
+        ]
     },
     "minimum-stability": "stable"
 }
