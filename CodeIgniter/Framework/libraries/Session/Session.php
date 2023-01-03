@@ -99,6 +99,8 @@ class CI_Session
 
 		$class   = new $class($this->_config);
 
+		include_once('OldSessionWrapper.php'); // Support PHP 8.1 and 8.2
+
 		$wrapper = new CI_SessionWrapper($class);
 
 		if (is_php('8.0')) {
