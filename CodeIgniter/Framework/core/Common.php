@@ -186,6 +186,25 @@ if ( ! function_exists('is'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('boolify'))
+{
+	/**
+	 * Convert common true/false strings into boolean values
+	 *
+	 * @param int|string $status
+	 * @return bool
+	 */
+	function boolify(int|string $status)
+	{
+		return filter_var(
+			$status,
+			FILTER_VALIDATE_BOOLEAN
+		);
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('is_blank'))
 {
 	/**
