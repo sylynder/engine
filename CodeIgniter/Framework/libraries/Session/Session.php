@@ -46,6 +46,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @subpackage	Libraries
  * @category	Sessions
  * @author		Andrey Andreev
+ * @author		Kwame Oteng Appiah-Nti
  * @link		https://codeigniter.com/userguide3/libraries/sessions.html
  */
 class CI_Session
