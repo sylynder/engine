@@ -86,7 +86,15 @@ if ( ! function_exists('app'))
         if ($class === null) {
             return Instance::create();
         }
-        
+
+        if ((!empty($class) && class_exists($class)) && !empty($params)) {
+            return new $class($params);
+        }
+
+        if ((!empty($class) && class_exists($class))) {
+            return new $class();
+        }
+
         $get_class = explode('/', has_dot($class));
         $class_type = count($get_class);
 
@@ -104,6 +112,13 @@ if ( ! function_exists('app'))
             use_model($class); // load model
 
             return ci()->{$class_name}; // return model object
+        }
+
+        if (contains('Action', $class)) {
+            
+            use_action($class); // load action
+
+            return ci()->{$class_name}; // return action object
         }
 
         // let's assume it's a model without
