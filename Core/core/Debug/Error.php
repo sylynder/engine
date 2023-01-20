@@ -2,7 +2,7 @@
 
 namespace Base\Debug;
 
-class AtEase
+class Error
 {
 
 	private static int $suppressCount = 0;

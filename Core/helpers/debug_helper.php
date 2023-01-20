@@ -2,7 +2,7 @@
 defined('COREPATH') or exit('No direct script access allowed');
 
 use Base\Debug\Debug;
-use Base\Debug\AtEase;
+use Base\Debug\Error;
 
 if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) ) 
 {
@@ -15,7 +15,7 @@ if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) )
          * @param bool $end Whether to restore warnings
          */
         function shut_up( $end = false ) {
-            AtEase::suppressWarnings( $end );
+            Error::suppressWarnings( $end );
         }
     }
 
@@ -38,7 +38,7 @@ if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) )
          * Restore error level to previous value
          */
         function speak_up() {
-            AtEase::restoreWarnings();
+            Error::restoreWarnings();
         }
     }
 
@@ -52,7 +52,7 @@ if ( ! function_exists( __NAMESPACE__ . '\\suppressWarnings' ) )
          * @return mixed
          */
         function keep_quiet( callable $callback, ...$args ) {
-            return AtEase::quietCall( $callback, ...$args );
+            return Error::quietCall( $callback, ...$args );
         }
     }
 
