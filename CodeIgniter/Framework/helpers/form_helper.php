@@ -906,6 +906,23 @@ if ( ! function_exists('form_error'))
 	}
 }
 
+// ------------------------------------------------------------------------
+
+if ( ! function_exists('filter_fields'))
+{
+
+	/**
+	 * Filter Unknown Form Fields Out
+	 *
+	 * @param array $fields
+	 * @param array $expected_fields
+	 * @return array
+	 */
+	function filter_fields($fields = [], $expected_fields = [])
+	{
+		return array_intersect_key($fields, array_flip($expected_fields));
+	}
+}
 
 // ------------------------------------------------------------------------
 
