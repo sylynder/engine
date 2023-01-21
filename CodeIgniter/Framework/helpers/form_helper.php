@@ -890,6 +890,13 @@ if ( ! function_exists('form_error'))
 	 */
 	function form_error($field = '', $prefix = '', $suffix = '')
 	{
+		$error_array = !empty(session('form_error')) ? session('form_error') : [];
+        $error_array = array_merge(form_error_array(), $error_array);
+        
+        if (array_key_exists($field, $error_array)) {
+            return $error_array[$field];
+        }
+
 		if (false === ($OBJ =& _get_validation_object()))
 		{
 			return '';
@@ -898,6 +905,7 @@ if ( ! function_exists('form_error'))
 		return $OBJ->error($field, $prefix, $suffix);
 	}
 }
+
 
 // ------------------------------------------------------------------------
 
