@@ -331,6 +331,32 @@ class CI_Form_validation
 
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Alias to the set_data() method above
+	 *
+	 * @param array $data
+	 * @return CI_Form_validation
+	 */
+	public function setData(array $data)
+	{
+		return $this->set_data($data);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Alias to the setData() method above
+	 *
+	 * @param array $data
+	 * @return CI_Form_validation
+	 */
+	public function requestData(array $data)
+	{
+		return $this->setData($data);
+	}
 	
 	// --------------------------------------------------------------------
 
@@ -366,6 +392,8 @@ class CI_Form_validation
 		$this->_error_messages = array_merge($this->_error_messages, $lang);
 		return $this;
 	}
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Alias to the method above
