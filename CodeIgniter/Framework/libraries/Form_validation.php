@@ -461,6 +461,58 @@ class CI_Form_validation
           return $this->_error_array;
      }
 
+	// --------------------------------------------------------------------
+
+	/**
+      * Get Validation Rules From Configurations
+      *
+      * @return array
+      */
+     public function configurationRules()
+     {
+          return $this->_config_rules;
+     }
+
+	// --------------------------------------------------------------------
+
+     /**
+      * Get All Validated Fields Except Specified Fields
+      *
+      * @param mixed $request
+      * @return array
+      */
+     public function useExcept(array $except)
+	 {
+	
+		$fields = $this->validation_data;
+
+		foreach($except as $key) {
+			unset($fields[$key]);
+		}
+
+		return $fields;
+	 }
+
+	 // --------------------------------------------------------------------
+
+	 /**
+	  * Get Only Specified Fields From The Validated Fields
+	  *
+	  * @param array $only
+	  * @return array
+	  */
+	 public function useOnly(array $only)
+	 {
+
+		$only = !is_array($only) ? [$only] : $only;
+
+		$fields = $this->validation_data;
+
+		return array_intersect_key($fields, array_flip($only));
+
+	 }
+
+	// --------------------------------------------------------------------
 
 	/**
 	 * Error String
