@@ -452,6 +452,17 @@ class CI_Form_validation
 	// --------------------------------------------------------------------
 
 	/**
+      * Get Validation Errors As Array
+      *
+      * @return array
+      */
+     public function errorsAsArray()
+     {
+          return $this->_error_array;
+     }
+
+
+	/**
 	 * Error String
 	 *
 	 * Returns the error messages as a string, wrapped in the error delimiters
