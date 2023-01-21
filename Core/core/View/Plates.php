@@ -158,6 +158,7 @@ class Plates
 		'endunless',
 		'includeIf',
 		'include',
+		'head',
 		'partial',
 		'section',
 		'component',
@@ -1320,6 +1321,17 @@ class Plates
 
 		return preg_replace($pattern, '$1<?php echo $this->include$2; ?>', $content);
 	}
+
+	/**
+	*  Rewrites Plates @head statement into valid PHP
+	*/
+	protected function compile_head(string $content): ?string
+	{
+		$pattern = '/(\s*)@head(\s*\(.*\))/';
+
+		return preg_replace($pattern, '$1<?php echo $this->partial$2; ?>', $content);
+	}
+
 
 	/**
 	 *  Rewrites Plates @partial statement into valid PHP
