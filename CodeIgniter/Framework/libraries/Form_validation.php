@@ -585,6 +585,19 @@ class CI_Form_validation
 		return $this->run($group);
 	}
 
+	/**
+	 * Alias to the run() method
+	 *
+	 * This function does all the work.
+	 *
+	 * @param	string	$group
+	 * @return	bool
+	 */
+	public function true($group = '')
+	{
+		return $this->run($group);
+	}
+
 	// --------------------------------------------------------------------
 
 	/**
