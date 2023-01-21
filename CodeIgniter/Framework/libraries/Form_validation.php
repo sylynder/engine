@@ -576,6 +576,7 @@ class CI_Form_validation
 	 *
 	 * This function does all the work.
 	 *
+	 * @deprecated	2.1.1	use true() instead Alias to the run() method
 	 * @param	string	$group
 	 * @return	bool
 	 */
