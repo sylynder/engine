@@ -81,6 +81,18 @@ class Base_Form_validation extends \CI_Form_validation
      {
           $this->_error_array[$field] = $error;
      }
+
+     /**
+      * Alias to the method above
+      *
+      * @param   string  $field  Field name
+      * @param   string  $error  Error message
+      *
+      */
+     public function setError(string $field, string $error)
+     {
+          $this->set_error($field, $error);
+     }
      
      /**
       * To return error message of choice.
@@ -89,10 +101,21 @@ class Base_Form_validation extends \CI_Form_validation
       * @param string $message
       * @return string
       */
-     public function set_error_message($message)
+     public function set_error_message($message = '')
      {
           $this->ci->lang->load('upload');
           return ($this->ci->lang->line($message) == false) ? $message : $this->ci->lang->line($message);
+     }
+
+     /**
+      * Alias to the method above
+      *
+      * @param string $message
+      * @return string
+      */
+     public function setErrorMessage($message = '')
+     {
+          $this->set_error_message($message);
      }
 
      public function _execute($row, $rules, $postdata = null, $cycles = 0)
