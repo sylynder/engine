@@ -78,6 +78,20 @@ class Arrayz
 	 */
 	public $ink;
 
+	/**
+	 * Pagination results
+	 *
+	 * @var string
+	 */
+	public $results;
+
+	/**
+	 * Pagination pager
+	 *
+	 * @var string
+	 */
+	public $pager;
+
 
 	public function __construct($array = [])
 	{
@@ -343,7 +357,7 @@ class Arrayz
      */
     public function search(mixed $searchParam, bool $strict = false): int|string|false
     {
-        return array_search($searchParam, $this->source, $strict = false);
+        return array_search($searchParam, $this->source, $strict);
     }
 
     /**
