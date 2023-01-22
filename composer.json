@@ -9,7 +9,7 @@
         "role": "Software Engineer"
     }],
     "require": {
-        "php": "^8.0"
+        "php": "^8.1"
     },
     "autoload": {
         "psr-4": {
@@ -19,5 +19,8 @@
             "CodeIgniter/Framework"
         ]
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "stable",
+    "require-dev": {
+        "rector/rector": "^0.14.2"
+    }
 }
