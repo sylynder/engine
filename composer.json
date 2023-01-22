@@ -19,8 +19,5 @@
             "CodeIgniter/Framework"
         ]
     },
-    "minimum-stability": "stable",
-    "require-dev": {
-        "rector/rector": "^0.14.2"
-    }
+    "minimum-stability": "stable"
 }
