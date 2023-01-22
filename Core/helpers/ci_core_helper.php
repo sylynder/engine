@@ -506,11 +506,11 @@ if ( ! function_exists('files'))
      * function to get $_FILES values
      *
      * @param string $index
-     * @return array|string
+     * @return mixed
      */
     function files($index = '')
     {
-        if ($index !== '') {
+        if (isset($_FILES[$index])) {
             return $_FILES[$index];
         }
 
