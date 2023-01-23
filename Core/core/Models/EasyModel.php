@@ -1070,20 +1070,23 @@ class EasyModel extends Model
         return $this;
     }
 
+        //------------------ CodeIgniter Database  Wrappers ------------------
 
-    //------------------ CodeIgniter Database  Wrappers --------------------------------------------------
-
-    /**
-     *   To allow for more expressive syntax, we provide wrapper functions
-     *   for most of the query builder methods here.
-     *
-     *   This allows for calls such as:
-     *   $result = $this->model->select('...')
-     *                         ->where('...')
-     *                         ->having('...')
-     *                         ->find();
-     *
+    /*
+     |   To allow for more expressive syntax, we provide 
+     |   wrapper functions for most of the query 
+     |   builder methods here and also some 
+     |   custom methods.
+     |
+     |   This allows for calls such as:
+     |   $result = $this->model->select('...')
+     |                         ->where('...')
+     |                         ->having('...')
+     |                         ->find();
+     |
      */
+
+    //--------------------------------------------------------------------
 
     /**
      * Pick function
@@ -1098,6 +1101,105 @@ class EasyModel extends Model
         $this->db->select($select, $escape);
         return $this;
     }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Increments the value of fields or multiple fields 
+     * and their values by primary key of a specific table.
+     * 
+     * @param mixed $id
+     * @param string|array $fields
+     * @param integer $value
+     * @param array $columns
+     * @return bool|CI_DB_query_builder
+     */
+    public function increment(
+        mixed $id,
+        string|array $fields,
+        int|array $value = 1,
+        array $columns = []
+    ) {
+        
+        if (is_numeric($value)) {
+            $value = (int) abs($value);
+        }
+       
+        $columns = is_array($value) ? $value : $columns;
+
+        $fieldsArray = is_array($fields);
+
+        $this->db->where($this->primaryKey, $id);
+
+        if ($fieldsArray) {
+            foreach ($fields as $field => $number) {
+                $this->db->set($field, "{$field}+{$number}", false);
+            }
+        }
+
+        if (!$fieldsArray && is_string($fields)) {
+            $this->db->set($fields, "{$fields}+{$value}", false);
+        }
+
+        if (!empty($columns) ) {
+            $this->db->set($columns, false);
+        }
+
+        $result = $this->db->update($this->table);
+
+        return ($fieldsArray) ? $result : $this;
+       
+    }
+
+    //--------------------------------------------------------------------
+
+    /**
+     * Decrements the value of fields or multiple fields 
+     * and their values by primary key of a specific table.
+     * 
+     * @param mixed $id
+     * @param string|array $fields
+     * @param integer $value
+     * @param array $columns
+     * @return bool|CI_DB_query_builder
+     */
+    public function decrement(
+        mixed $id,
+        string|array $fields,
+        int|array $value = 1,
+        array $columns = []
+    ) {
+        if (is_numeric($value)) {
+            $value = (int) abs($value);
+        }
+       
+        $columns = is_array($value) ? $value : $columns;
+
+        $fieldsArray = is_array($fields);
+
+        $this->db->where($this->primaryKey, $id);
+
+        if ($fieldsArray) {
+            foreach ($fields as $field => $number) {
+                $this->db->set($field, "{$field}-{$number}", false);
+            }
+        }
+
+        if (!$fieldsArray && is_string($fields)) {
+            $this->db->set($fields, "{$fields}-{$value}", false);
+        }
+
+        if (!empty($columns) ) {
+            $this->db->set($columns, false);
+        }
+
+        $result = $this->db->update($this->table);
+
+        return ($fieldsArray) ? $result : $this;
+       
+    }
+
+    //--------------------------------------------------------------------
 
     /**
      * Select function
@@ -1454,5 +1556,6 @@ class EasyModel extends Model
         $this->db->set($key, $value, $escape);
         return $this;
     }
+    
 }
 /* end of file Core/core/Models/EasyModel.php */
