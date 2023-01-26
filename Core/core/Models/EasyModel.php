@@ -431,7 +431,7 @@ class EasyModel extends Model
      * @param integer|string $optionalValue (Optional)
      * @param string         $orderBy (Optional)
      *
-     * @return object database results
+     * @return array|object database results
      */
     public function get($idOrRow = null, $optionalValue = null, $orderBy = null)
     {
@@ -1494,6 +1494,50 @@ class EasyModel extends Model
     {
         $this->db->order_by($this->table . '.' . $orderby, $direction);
         return $this;
+    }
+
+    /**
+     * Retrieve previous record in 
+     * a given table
+     *
+     * @param int $currentId
+     * @param string $fields
+     * @return array|object
+     */
+    public function previous($currentId, $fields = '*')
+    {
+        $this->db->select($fields)
+            ->from($this->table)
+            ->where('id <', $currentId)
+            ->order_by('id', 'desc')
+            ->limit(1);
+        
+        $query = $this->db->get();
+        
+        return $this->getRowResult($query);
+
+    }
+
+    /**
+     * Retrieve next record in 
+     * a given table
+     *
+     * @param int $currentId
+     * @param string $fields
+     * @return array|object
+     */
+    public function next($currentId, $fields = '*')
+    {
+        $this->db->select($fields)
+            ->from($this->table)
+            ->where('id >', $currentId)
+            ->order_by('id', 'asc')
+            ->limit(1);
+        
+        $query = $this->db->get();
+        
+        return $this->getRowResult($query);
+
     }
 
     /**
