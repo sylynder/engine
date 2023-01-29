@@ -1009,7 +1009,7 @@ if ( ! function_exists('use_config'))
     }
 }
 
-if ( ! function_exists('use_package')) 
+if ( ! function_exists('use_thirdparty')) 
 {
     /**
      * Use a package from a specific directory
