@@ -33,7 +33,7 @@ vendor/
         └── MX/
 
 ```
-
+![MIT License](https://img.shields.io/github/license/sylynder/webby)
 ![Lines of code](https://img.shields.io/tokei/lines/github/sylynder/engine) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/sylynder/webby) ![Packagist Version](https://img.shields.io/packagist/v/sylynder/engine) ![Packagist Downloads (custom server)](https://img.shields.io/packagist/dt/sylynder/engine)
 
 ## About Webby
