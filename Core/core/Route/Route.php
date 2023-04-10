@@ -79,9 +79,16 @@ class Route
 	/**
 	 * Route Prefix variable
 	 *
-	 * @var string
+	 * @var mixed
 	 */
 	protected static $prefix = null;
+
+	/**
+	 * Route Group variable
+	 *
+	 * @var mixed
+	 */
+	protected static $group = null;
 
 	/**
 	 * Named routes
@@ -317,7 +324,7 @@ class Route
 	public function with($key, $value = null)
 	{
 
-		ci('load')->library('session');
+		ci()->use->library('session');
 
 		if (is_array($key)) {
 			ci()->session->set_flashdata($key);
@@ -364,7 +371,7 @@ class Route
 	 */
 	public function withInput($post = [])
 	{
-		ci('load')->library('session');
+		ci()->use->library('session');
 
 		if (empty($post)) {
 			$post = ci()->input->post();
@@ -483,8 +490,9 @@ class Route
 		static::$temporaryRoutes[$from] = $to;
 
 		$prefix = is_null(static::$prefix) ? '' : static::$prefix . '/';
+		$group = is_null(static::$group) ? '' : static::$group . '/';
 
-		$from = static::$nestedGroup . $prefix . $from;
+		$from = static::$nestedGroup . $prefix . $group . $from;
 
 		// Are we saving the name for this one?
 		if (isset($options['as']) && !empty($options['as'])) {
@@ -503,71 +511,6 @@ class Route
 		}
 	}
 
-	/**
-	 * Static Route method
-	 *
-	 * @param string $from
-	 * @param string $to
-	 * @param boolean $nested
-	 * @return void
-	 */
-	public static function route($from, $to, $nested = false)
-	{
-		$parameterfy = false;
-
-		// Allow for array based routes and other symbol routes
-		if (!is_array($to) && strstr($to, '.')) {
-			$to = str_replace('.', '/', $to);
-		}
-
-		if (is_array($to)) {
-			$to = $to[0] . '/' . strtolower($to[1]);
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)->([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)::([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		} elseif (
-			preg_match('/^([a-zA-Z\_\-0-9\/]+)@([a-zA-Z\_\-0-9\/]+)$/m', $to, $matches)
-		) {
-			$to = $matches[1] . '/' . $matches[2];
-			$parameterfy = true;
-		}
-
-		// Do we have a namespace?
-		if (static::$namespace) {
-			$from = static::$namespace . '/' . $from;
-		}
-
-		// Account for parameters in the URL if we need to
-		if ($parameterfy) {
-			$to = static::parameterfy($from, $to);
-		}
-
-		// Apply our routes
-		static::$temporaryRoutes[$from] = $to;
-
-		$prefix = is_null(static::$prefix) ? '' : static::$prefix . '/';
-
-		$from = static::$nestedGroup . $prefix . $from;
-
-		static::$routes[$from] = $to;
-
-		// Do we have a nested function?
-		if ($nested && is_callable($nested) && static::$nestedDepth === 0) {
-			static::$nestedGroup    .= rtrim($from, '/') . '/';
-			static::$nestedDepth     += 1;
-			call_user_func($nested);
-
-			static::$nestedGroup = '';
-		}
-	}
 
 	public static function any($from, $to, $options = [], $nested = false)
 	{
@@ -1065,11 +1008,11 @@ class Route
 	 * @param  string  $name  The prefix to add to the routes.
 	 * @param  Closure $callback
 	 */
-	protected static function prefix($name, Closure $callback)
+	public static function prefix($name, Closure $callback)
 	{
-		static::$prefix = $name;
+		static::$group = $name . '/';
 		call_user_func($callback);
-		static::$prefix = null;
+		static::$group = null;
 	}
 
 	/**
@@ -1081,7 +1024,9 @@ class Route
 	 */
 	public static function group($name, Closure $callable = null)
 	{
-		static::prefix($name, $callable);
+		static::$group = $name;
+		call_user_func($callable);
+		static::$group = null;
 	}
 
 	/**
@@ -1093,7 +1038,7 @@ class Route
 	 */
 	public static function module($name, Closure $callable = null)
 	{
-		static::prefix($name, $callable);
+		static::group($name, $callable);
 	}
 
 	/**
@@ -1152,8 +1097,10 @@ class Route
 	public static function reset()
 	{
 		static::$routes = [];
-		static::$namedRoutes     = [];
-		static::$nestedDepth     = 0;
+		static::$namedRoutes = [];
+		static::$nestedDepth = 0;
+		static::$group = null;
+		static::$prefix = null;
 	}
 
 	/**
