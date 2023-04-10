@@ -108,9 +108,11 @@ class Base_Exceptions extends \CI_Exceptions
 			show_404();
 		}
 
-		$location = str_replace('../', '', get_instance()->router->directory);
+		$directory = (get_instance()) ? get_instance()->router->directory : '';
+
+		$location = str_replace('../', '', $directory);
 		
-		$filepath = session('__view_path') ?: $exception->getFile();
+		$filepath = function_exists('session') ? session('__view_path') : $exception->getFile();
 		$line = $exception->getLine();
 		$message = $exception->getMessage();
 		$num = $exception->getCode();
@@ -173,15 +175,18 @@ class Base_Exceptions extends \CI_Exceptions
 		if (empty($templates_path)) {
 			$templates_path = VIEWPATH . 'errors' . DIRECTORY_SEPARATOR;
 		}
+		
+		$directory = (get_instance()) ? get_instance()->router->directory : '';
 
-		$location = str_replace('../', '', get_instance()->router->directory);
+		$location = str_replace('../', '', $directory);
+		
 		$filelocation = $filepath;
 		$severity = isset($this->levels[$severity]) ? $this->levels[$severity] : $severity;
 
 		if (_evaluated($filepath)) {
 
 			$evaluated = true;
-			$file = session('__view_path');
+			$file = function_exists('session') ? session('__view_path') : '';
 			$_error =& load_class('Exceptions', 'core');
 			$_error->log_exception($severity, $message, $file, $line);
 
