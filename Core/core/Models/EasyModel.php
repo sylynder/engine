@@ -1600,6 +1600,69 @@ class EasyModel extends Model
         $this->db->set($key, $value, $escape);
         return $this;
     }
+
+    /**
+	 * Start Transaction
+	 *
+	 * @param	bool	$test_mode = false
+	 * @return	bool
+	 */
+    public function startTransaction($testMode = false)
+    {
+        return $this->db->trans_start($testMode);
+    }
+
+    /**
+	 * Begin Transaction
+	 *
+	 * @param	bool	$test_mode = false
+	 * @return	bool
+	 */
+    public function beginTransaction($testMode = false)
+    {
+        return $this->db->trans_begin($testMode);
+    }
+
+    /**
+	 * Complete Transaction
+	 *
+	 * @return	bool
+	 */
+    public function completeTransaction()
+    {
+        return $this->db->trans_complete();
+    }
+
+    /**
+	 * Lets you retrieve the transaction flag 
+     * to determine if it has failed
+	 *
+	 * @return	bool
+	 */
+    public function transactionStatus()
+    {
+        return $this->db->trans_status();
+    }
+
+    /**
+	 * Rollback Transaction
+	 *
+	 * @return	bool
+	 */
+    public function rollbackTransaction()
+    {
+        return $this->db->trans_rollback();
+    }
+
+    /**
+	 * Commit Transaction
+	 *
+	 * @return	bool
+	 */
+    public function commitTransaction()
+    {
+        return $this->db->trans_commit();
+    }
     
 }
 /* end of file Core/core/Models/EasyModel.php */
