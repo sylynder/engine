@@ -514,7 +514,7 @@ class CI_Pagination {
 		{
 			$this->cur_page = $this->CI->input->get($this->query_string_segment);
 		}
-		elseif (empty($this->cur_page))
+		else
 		{
 			// Default to the last segment number if one hasn't been defined.
 			if ($this->uri_segment === 0)
@@ -529,10 +529,6 @@ class CI_Pagination {
 			{
 				$this->cur_page = str_replace([$this->prefix, $this->suffix], '', $this->cur_page);
 			}
-		}
-		else
-		{
-			$this->cur_page = (string) $this->cur_page;
 		}
 
 		// If something isn't quite right, back to the default base page.
@@ -593,7 +589,7 @@ class CI_Pagination {
 		{
 			$i = ($this->use_page_numbers) ? $uri_page_number - 1 : $uri_page_number - $this->per_page;
 
-			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, ($this->cur_page - 1));
+			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int) $i);
 
 			if ($i === $base_page)
 			{
@@ -613,12 +609,47 @@ class CI_Pagination {
 		// Render the pages
 		if ($this->display_pages !== false)
 		{
+			/*
+			* On page 4, show hidden page 2
+			*/ 
+			if ($start == 4) {
+				$start--;
+			}
+
+			/*
+			* On pages after 4, show dots before pages
+			*/ 
+			if (($start) > 4) {
+				$output .= '<div class="continues">. . .</div>';
+			}
+
+			/*
+			* On page 4th last, show hidden page 2nd last
+			*/ 
+			if ($start == ($num_pages - 3) && $start > 4) {
+				$end++;
+			}
+
+			/*
+			* On last page, show hidden page 3rd last
+			*/ 
+			if ($start == $num_pages && $start> 3 ) {
+				$start--;
+			}
+
+			/*
+			* On page 1, show hidden page 3
+			*/ 
+			if ($start == 1 && $end < $num_pages-1) {
+				$end++;
+			}
+
 			// Write the digit links
 			for ($loop = $start - 1; $loop <= $end; $loop++)
 			{
 				$i = ($this->use_page_numbers) ? $loop : ($loop * $this->per_page) - $this->per_page;
 
-				$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, $loop);
+				$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int) $i);
 
 				if ($i >= $base_page)
 				{
@@ -636,11 +667,20 @@ class CI_Pagination {
 					else
 					{
 						$append = $this->prefix.$i.$this->suffix;
-						$output .= $this->num_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.'>'
+						$output .= $this->num_tag_open.'<a href="'.$base_url.$append.'"'.$attributes.$this->_attr_rel('start').'>'
 							.$loop.'</a>'.$this->num_tag_close;
 					}
+
 				}
 			}
+
+			/*
+			* On pages before last, show dots
+			*/ 
+			if ($end < ($num_pages-1)) {
+				$output .= '<div class="continues">. . .</div>';
+			}
+
 		}
 
 		// Render the "next" link
@@ -648,7 +688,7 @@ class CI_Pagination {
 		{
 			$i = ($this->use_page_numbers) ? $this->cur_page + 1 : $this->cur_page * $this->per_page;
 
-			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, $this->cur_page + 1);
+			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int) $i);
 
 			$output .= $this->next_tag_open.'<a href="'.$base_url.$this->prefix.$i.$this->suffix.'"'.$attributes
 				.$this->_attr_rel('next').'>'.$this->next_link.'</a>'.$this->next_tag_close;
@@ -662,13 +702,12 @@ class CI_Pagination {
 			
 		}
 
-
-		// Render the "Last" link
+		// Render the "last" link
 		if ($this->last_link !== false && ($this->cur_page + $this->num_links + ! $this->num_links) < $num_pages)
 		{
 			$i = ($this->use_page_numbers) ? $num_pages : ($num_pages * $this->per_page) - $this->per_page;
 
-			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, $num_pages);
+			$attributes = sprintf('%s %s="%d"', $this->_attributes, $this->data_page_attr, (int) $i);
 
 			$output .= $this->last_tag_open.'<a href="'.$base_url.$this->prefix.$i.$this->suffix.'"'.$attributes.'>'
 				.$this->last_link.'</a>'.$this->last_tag_close;
