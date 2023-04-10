@@ -199,7 +199,7 @@ class Arrayz
 		}
 
 		$this->cache->serializeWith = $this->cacheAs;
-		$this->cache->setCacheItem($this->cacheItem, $data);
+		$this->cache->setCacheItem($this->cacheItem, $data, $ttl);
 
 		return $this;
 	}
@@ -223,11 +223,11 @@ class Arrayz
 	 * @param string $item
 	 * @return bool
 	 */
-	public function available($item = ''): bool
+	public function available($item = '', $ttl = null): bool
 	{
 		$this->cache->setCachePath($this->cachePath);
 
-		return $this->cache->isCached($item);
+		return $this->cache->isCached($item, $ttl);
 	}
 
 	/**

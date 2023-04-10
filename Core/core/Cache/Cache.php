@@ -82,33 +82,54 @@ class Cache extends \Base_Output
      * @param string $key containing the identifier of the cached item
      * @return bool whether the item is currently cached or not
      */
-    public function isCached($key)
+    public function isCached($key, $ttl = null)
     {
         $key = sha1($key);
 
         $this->setCachePath(); // Set the correct cache path
 
-        $cachePath = $this->filesCachePath();
-        
-        // checks if the cached item exists and that it has not expired.
-        $fileExpires = file_exists($cachePath .$key. $this->cacheExtension) 
-                            ? (filectime($cachePath .$key. $this->cacheExtension) + $this->expireAfter)
-                            : (time() - 10);
+        // Use the default expiration time if $ttl is not provided
+        $ttl = $ttl ?? $this->expireAfter;
 
-        return ($fileExpires >= time()) ? true : false;
+        $cachePath = $this->filesCachePath();
+
+        $cachedFile = $cachePath . $key . $this->cacheExtension;
+
+        if (!file_exists($cachedFile)) {
+            return false;
+        }
+
+        // Get the modification time of the cached file 
+        // and add the expiration time
+        $expirationTime = filemtime($cachedFile) + $ttl;
+
+        // Check if the item has expired or not
+        if ($expirationTime < time()) {
+            return false;
+        }
+
+        return true;
     }
 
-    public function setCacheItem($key, $value)
+    /**
+     * Set Cache Item with Time to live
+     *
+     * @return void
+     */
+    public function setCacheItem($key, $value, $ttl = null)
     {
         $this->setCachePath(); // Set the correct cache path
 
-        $cachePath = $this->filesCachePath();
+        // Use the default expiration time if $ttl is not provided
+        $ttl = $ttl ?? $this->expireAfter;
 
-        // hashing the key in order to ensure that the item
+        // Hash the key in order to ensure that the item
         // is stored with an appropriate file name in the file system.
         $key = sha1($key);
 
-        // serializes or compress the contents so that they can 
+        $cachedFile = $this->filesCachePath() . $key . $this->cacheExtension;
+
+        // Serialize or compress the contents so that they can 
         // be stored in plain text
         if ($this->serializeWith === self::JSON) {
             $value = json_encode($value);
@@ -124,11 +145,12 @@ class Cache extends \Base_Output
         if ($this->serializeWith === self::SERIALIZE) {
             $value = serialize($value);
         }
-        
-        try { 
-            file_put_contents($cachePath . $key . $this->cacheExtension, $value);
+
+        try {
+            file_put_contents($cachedFile, $value, LOCK_EX);
+            touch($cachedFile, time() + $ttl);
         } catch(\Exception $e) {
-            log_message('error', $e->message);
+            log_message('error', $e->getMessage());
         }
 
     }
@@ -143,17 +165,17 @@ class Cache extends \Base_Output
     {
         $this->setCachePath(); // Set the correct cache path
 
-        $cachePath = $this->filesCachePath();
+        $key = sha1($key); // hash the key
 
-        $key = sha1($key);
+        $cachedFile = $this->filesCachePath() . $key . $this->cacheExtension;
 
-        $exists = file_exists($cachePath . $key . $this->cacheExtension);
+        $exists = file_exists($cachedFile);
 
         if (!$exists) {
             return false;
         }
 
-        $items = file_get_contents($cachePath .$key. $this->cacheExtension);
+        $items = file_get_contents($cachedFile);
 
         // unserializes or uncompress the contents so that they can
         // be read in array or object
@@ -173,8 +195,26 @@ class Cache extends \Base_Output
             $items = unserialize($items);
         }
         
-
         return $items;
+    }
+
+    /**
+     * Return time remaining until cached file expires
+     *
+     * @return mixed
+     */
+    public function getTTL($key, $ttl = null)
+    {
+        $this->setCachePath(); // Set the correct cache path
+
+        // Use the default expiration time if $ttl is not provided
+        $ttl = $ttl ?? $this->expireAfter;
+        
+        $cachedFile = $this->filesCachePath() . $key . $this->cacheExtension;
+
+        $expirationTime = filemtime($cachedFile) + $ttl;
+        $timeRemaining = $expirationTime - time();
+        return $timeRemaining > 0 ? $timeRemaining : 0;
     }
 
     /**
