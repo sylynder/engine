@@ -866,7 +866,7 @@ class EasyModel extends Model
      *
      * @return    boolean result
      */
-    public function update($idOrRow, $optionalValue = null, $data = [])
+    public function update($idOrRow = null, $optionalValue = null, $data = [])
     {
         if ($optionalValue == null) {
             if (is_array($idOrRow)) {
@@ -876,6 +876,10 @@ class EasyModel extends Model
             }
         } else {
             $this->db->where([$idOrRow => $optionalValue]);
+        }
+
+        if (is_null($idOrRow) && empty($data)) {
+            return $this->db->update($this->table);  
         }
 
         return $this->db->update($this->table, $data);
