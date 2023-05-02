@@ -672,10 +672,10 @@ class Route
 
 		$name = str_replace('.', '/', implode('.', $name));
 
-		static::get($name . '/list', $moc . '/index');
-		static::get($name . '/show/(:any)', $moc . '/show/$1');
+		static::get($name . '/index', $moc . '/index');
 		static::get($name . '/create', $moc . '/create');
-		static::post($name . '/save', $moc . '/store');
+		static::post($name . '/store', $moc . '/store');
+		static::get($name . '/show/(:any)', $moc . '/show/$1');
 		static::get($name . '/edit/(:any)', $moc . '/edit/$1');
 		static::put($name . '/update/(:any)', $moc . '/update/$1');
 		static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
@@ -767,11 +767,9 @@ class Route
 
 		$name = str_replace('.', '/', implode('.', $name));
 
-		static::get($name . '/list', $moc . '/index');
+		static::get($name . '/index', $moc . '/index');
+		static::post($name . '/store', $moc . '/store');
 		static::get($name . '/show/(:any)', $moc . '/show/$1');
-		static::get($name . '/create', $moc . '/create');
-		static::post($name . '/save', $moc . '/store');
-		static::get($name . '/edit/(:any)', $moc . '/edit/$1');
 		static::put($name . '/update/(:any)', $moc . '/update/$1');
 		static::delete($name . '/delete/(:any)', $moc . '/delete/$1');
 	}
@@ -786,6 +784,29 @@ class Route
 	public static function api($name, $hasController = true)
 	{
 		static::apiResource($name, $hasController);
+	}
+
+	/**
+	 * Singleton Resource method
+	 *
+	 * @param string $name i.e. module/controller name
+	 * @param boolean $hasController
+	 * @return void
+	 */
+	public static function singleton($name, $hasController = true)
+	{
+		$name = str_replace('/', '.', $name);
+		$name = explode('.', $name);
+		$module = $name[0];
+		$controller = !isset($name[1]) ? $module : $name[1];
+
+		$moc = static::setMOC($module, $controller, $hasController);
+
+		$name = str_replace('.', '/', implode('.', $name));
+
+		static::get($name . '/show/(:any)', $moc . '/show/$1');
+		static::get($name . '/edit/(:any)', $moc . '/edit/$1');
+		static::put($name . '/update/(:any)', $moc . '/update/$1');
 	}
 
 	/**
@@ -854,7 +875,7 @@ class Route
 	 * @param  string $name The name of the controller to route to.
 	 * @param  array $options A list of possible ways to customize the routing.
 	 */
-	public static function resources($name, $options = [], $nested = false, $hasController = true)
+	public static function resource($name, $options = [], $nested = false, $hasController = true)
 	{
 		if (empty($name)) {
 			return;
@@ -909,9 +930,9 @@ class Route
 
 		static::get($name, $moc . '/index' . $nestOffset, null, $nested);
 		static::get($name    . '/create', $moc . '/create' . $nestOffset, null, $nested);
-		static::get($name    . '/' . '(:any)' . '/edit', $moc . '/edit' . $nestOffset . '/$' . (1 + $offset), null, $nested);
+		static::post($name   . '/store', $moc . '/store' . $nestOffset, null, $nested);
 		static::get($name    . '/' . '(:any)', $moc . '/show' . $nestOffset . '/$' . (1 + $offset), null, $nested);
-		static::post($name   . '/save', $moc . '/store' . $nestOffset, null, $nested);
+		static::get($name    . '/' . '(:any)' . '/edit', $moc . '/edit' . $nestOffset . '/$' . (1 + $offset), null, $nested);
 		static::put($name    . '/' . '(:any)' . '/update', $moc . '/update' . $nestOffset . '/$' . (1 + $offset), null, $nested);
 		static::delete($name . '/' . '(:any)' . '/delete', $moc . '/delete' . $nestOffset . '/$' . (1 + $offset), null, $nested);
 	}
@@ -952,11 +973,7 @@ class Route
 	private static function setRouteSignature($name, $method, $moc)
 	{
 		if (in_array('index', $method)) {
-			static::get($name . '/list', $moc . '/index');
-		}
-
-		if (in_array('show', $method)) {
-			static::get($name . '/show/(:any)', $moc . '/show/$1');
+			static::get($name . '/index', $moc . '/index');
 		}
 
 		if (in_array('create', $method)) {
@@ -964,7 +981,11 @@ class Route
 		}
 
 		if (in_array('store', $method)) {
-			static::post($name . '/save', $moc . '/store');
+			static::post($name . '/store', $moc . '/store');
+		}
+
+		if (in_array('show', $method)) {
+			static::get($name . '/show/(:any)', $moc . '/show/$1');
 		}
 
 		if (in_array('edit', $method)) {
