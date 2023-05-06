@@ -925,11 +925,12 @@ class ApiServerController extends Controller
 
         // Find the key from server or arguments
         if (($key = isset($this->args[$apiKeyVariable]) ? $this->args[$apiKeyVariable] : $this->input->server($keyName))) {
+
+            $this->api->key = $key;
+            
             if (!($row = $this->api->db->where($this->config->item('api_key_column'), $key)->get($this->config->item('api_keys_table'))->row())) {
                 return false;
             }
-
-            $this->api->key = $row->{$this->config->item('api_key_column')};
 
             isset($row->user_id) && $this->api->user_id = $row->user_id;
             isset($row->level) && $this->api->level = $row->level;
