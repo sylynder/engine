@@ -543,9 +543,11 @@ class Help extends Console
                 php webby create:view <module-type:module-name> <view-file-path.extension>
 
             {$examples}
+                php webby create:view some_view.php
+                php webby create:view some-view.php
                 php webby create:view users/list-users.php
                 php webby create:view web:app users/list-users.php
-                php webby create:view web:app users/list-user.php --plates
+                php webby create:view web:app users/list_user.php --plates
 
         CREATEVIEW;
     }
