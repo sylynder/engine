@@ -803,8 +803,8 @@ class Console
         if (!empty($view[2])) {
             $viewType = $args[2];
         }
-        
-        $filename = str_replace('/', '-', $filename);
+
+        $filename = str_replace('/', '::', $filename);
         $module = empty($module) ? 'empty' : $module;
         $command = static::$phpCommand . 'create/createview/' . $module . '/' . $filename . '/' . $viewType;
 

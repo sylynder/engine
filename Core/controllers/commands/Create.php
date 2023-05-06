@@ -1401,7 +1401,7 @@ class Create extends ConsoleController
         $moduleName = '';
         $moduleType = '';
         $created = '';
-        $viewFile = str_replace('-', '/', $viewFile);
+        $viewFile = str_replace('::', '/', $viewFile);
 
         $pathinfo = (object) pathinfo($viewFile);
 
