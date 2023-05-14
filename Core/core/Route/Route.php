@@ -1031,9 +1031,9 @@ class Route
 	 */
 	public static function prefix($name, Closure $callback)
 	{
-		static::$group = $name . '/';
+		static::$prefix = $name;
 		call_user_func($callback);
-		static::$group = null;
+		static::$prefix = null;
 	}
 
 	/**

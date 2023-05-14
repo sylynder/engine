@@ -5,7 +5,8 @@ class {{CONTROLLER}} extends WebController
     public function __construct()
     {
         parent::__construct();
-        // $this->useDatabase(); // enable to use database
+        
+        // $this->use->database(); // enable to use database
 
     }
 
