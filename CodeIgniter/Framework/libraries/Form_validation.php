@@ -2137,7 +2137,7 @@ class CI_Form_validation
 
 		if (preg_match_all($regex_uppercase, $password) < 1) {
 			
-			$this->set_message('valid_password', 'The {field} field must be at least one uppercase letter.');
+			$this->set_message('valid_password', 'The {field} field must have at least one uppercase letter.');
 
 			return false;
 		}
