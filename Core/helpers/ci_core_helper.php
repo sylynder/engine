@@ -35,7 +35,7 @@ if ( ! function_exists('ci'))
         if ($class === 'database') {
             get_instance()->use->database();
             return get_instance()->db;
-		}
+        }
 
         //	Special cases 'user_agent' and 'unit_test' are loaded
 		//	with diferent names
@@ -95,7 +95,7 @@ if ( ! function_exists('app'))
         if ($class === 'database') {
             get_instance()->use->database();
             return get_instance()->db;
-		}
+        }
 
         if ((!empty($class) && class_exists($class)) && !empty($params)) {
             return new $class($params);
