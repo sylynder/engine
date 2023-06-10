@@ -1792,11 +1792,11 @@ if ( ! function_exists('honey_time'))
      */
     function honey_time($field = '', $time = '')
     {
-        $honeytime = base64_decode(session('honeytime'));
+        $honeytime = base64_decode((string)session('honeytime'));
 
         $time =  (int) $time ?: (int) env('honeypot.time');
 
-        $seconds = time() - $honeytime;
+        $seconds = time() - (int)$honeytime;
         
         if ($seconds < $time) {
             return false;
