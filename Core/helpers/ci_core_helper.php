@@ -32,6 +32,11 @@ if ( ! function_exists('ci'))
             return Instance::create();
         }
 
+        if ($class === 'database') {
+            get_instance()->use->database();
+            return get_instance()->db;
+		}
+
         //	Special cases 'user_agent' and 'unit_test' are loaded
 		//	with diferent names
 		if ($class !== 'user_agent') {
@@ -84,8 +89,13 @@ if ( ! function_exists('app'))
     {
 
         if ($class === null) {
-            return Instance::create();
+            return get_instance(); // Direct access to CI_Controller::get_instance();
         }
+
+        if ($class === 'database') {
+            get_instance()->use->database();
+            return get_instance()->db;
+		}
 
         if ((!empty($class) && class_exists($class)) && !empty($params)) {
             return new $class($params);
@@ -1324,5 +1334,22 @@ if ( ! function_exists('__'))
     function __($line, $log_errors = true)
     {
         return trans($line, $log_errors);
+    }
+}
+
+if ( ! function_exists('parse_lang')) 
+{
+    /**
+     * Translate a language line
+     * with placeholders
+     *
+     * @param string $lang_line
+     * @param array|mixed ...$placeholders
+     * @return string
+     */
+    function parse_lang(string $lang_line, ...$placeholders)
+    {
+        $format = trans($lang_line);
+        return vsprintf($format, $placeholders);
     }
 }
