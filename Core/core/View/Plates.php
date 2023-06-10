@@ -582,48 +582,16 @@ class Plates
 		if (is_array($data)) {
 			extract($data);
 		}
-
-		$oblevel = ob_get_level();
 		
 		ob_start();
 
 		$template = $this->replaceBlacklisted($template);
 
-		if (ENVIRONMENT === 'development')
-		{
-			$trace = debug_backtrace();
-			$args = $trace[0]['args'];
-			$path = $args[1]['platesPath'] . $args[1]['cacheName'];
+		$templateFile = $this->platesPath . md5((string) $this->viewPath) . PHPEXT;
+	
+		file_put_contents($templateFile, $template);
 
-			session('__view_path', $path);
-		}
-
-		try {
-			eval(' ?' . '>' . $template . '<'. '?'. 'php ');
-		} catch (\Exception $exception) {
-
-			while (ob_get_level() > $oblevel) {
-				ob_end_clean();
-			}
-
-			include_once(COREPATH . 'core/Base_Exceptions.php');
-
-			$exception = new \Base_Exceptions;
-
-			return $exception->show_exception($exception);
-
-		} catch (\ParseError $parseError) {
-
-			while (ob_get_level() > $oblevel) {
-				ob_end_clean();
-			}
-
-			include_once(COREPATH . 'core/Base_Exceptions.php');
-
-			$exception = new \Base_Exceptions;
-			
-			return $exception->show_exception($parseError);
-		}
+		include $templateFile;
 
 		$content = ob_get_clean();
 
