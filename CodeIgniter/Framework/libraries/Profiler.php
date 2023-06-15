@@ -53,6 +53,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
  * @author		EllisLab Dev Team
  * @link		https://codeigniter.com/userguide3/general/profiling.html
  */
+#[AllowDynamicProperties]
 class CI_Profiler
 {
 
