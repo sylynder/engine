@@ -46,7 +46,7 @@ if ( ! function_exists('view'))
         $view_path = dot2slash($view_path);
 
         if (config('view')['view_engine'] === '') {
-            return ci()->load->view($view_path, $view_data, $return);
+            return app()->use->view($view_path, $view_data, $return);
         }
  
         // Get the evaluated view contents for the given plates view
@@ -121,6 +121,10 @@ if ( ! function_exists('mail_view'))
             log_message('error', $exception_message);
         }
 
+        if (is_string($mail_view_path)) {
+            return app()->use->view($mail_view_path, $mail_data, true);
+        }
+
         if ( ! is_array($mail_view_path)) {
             $exception_message = "Email view malformed, make sure it has the 'double colon' symbol '::' in it";
             throw new \Exception($exception_message); 
@@ -128,11 +132,11 @@ if ( ! function_exists('mail_view'))
             exit;
         }
 
-        $layout = $mail_view_path[0];
-        $view = $mail_view_path[1];
+        [$layout, $view] = $mail_view_path;
+
         $mail_data = add_associative_array($mail_data, 'content', $view);
 
-        return ci()->load->view($layout, $mail_data, true);
+        return app()->use->view($layout, $mail_data, true);
     }
 }
 
