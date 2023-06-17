@@ -402,14 +402,16 @@ class MX_Loader extends \CI_Loader
 		extract($_ci_data);
 
 		$_is_view = false;
-		$ext = 'php';
+		$ext = (!empty(config_item('view')['view_engine'])) 
+			? ltrim(config_item('plate_extension'), '.') 
+			: 'php';
 
 		if (isset($_ci_view)) {
 			$_ci_path = '';
 			$_is_view = true;
 
 			/* add file extension if not provided */
-			$_ci_file = (pathinfo($_ci_view, PATHINFO_EXTENSION)) ? $_ci_view : $_ci_view . EXT;
+			$_ci_file = (pathinfo($_ci_view, PATHINFO_EXTENSION)) ? $_ci_view : $_ci_view .'.'. $ext;
 
 			foreach ($this->_ci_view_paths as $path => $cascade) {
 				if (file_exists($view = $path . $_ci_file)) {
