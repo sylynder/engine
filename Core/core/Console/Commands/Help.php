@@ -16,7 +16,7 @@ class Help extends Console
     public static function runHelp()
     {
         // Console::runSystemCommand(Console::$phpCommand . 'help');
-        Console::runSystemCommand('php webby');
+        Console::runSystemCommand(Console::userConstants()->PHP_CLI_VERSION . ' webby');
     }
 
     /**
@@ -540,14 +540,14 @@ class Help extends Console
                 Create a view by specifying which path and file name to give or a module it belongs with.
 
             {$usage}
-                php webby create:view <module-type:module-name> <view-file-path.extension>
+                php webby create:view <module-type:module-name> <view-file-path.extension> <option>
 
             {$examples}
                 php webby create:view some_view.php
                 php webby create:view some-view.php
                 php webby create:view users/list-users.php
                 php webby create:view web:app users/list-users.php
-                php webby create:view web:app users/list_user.php --plates
+                php webby create:view web:app users/list_user.php --plates   
 
         CREATEVIEW;
     }
