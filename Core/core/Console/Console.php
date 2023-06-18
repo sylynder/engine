@@ -14,7 +14,7 @@ namespace Base\Console;
 class Console 
 {
 
-    protected static $phpCommand = 'php public/index.php ';
+    protected static $phpCommand = '';
 
     private static $rootpath = '';
 
@@ -33,6 +33,11 @@ class Console
     private const DEFAULT_PORT = 8085;
 
     private static $sylynderEngine = 'sylynder/engine';
+
+    public static function phpCommand()
+    {
+        return Console::userConstants()->PHP_CLI_VERSION . ' public/index.php ';
+    }
 
     /** 
      * Grab available defined user constants
@@ -157,47 +162,47 @@ class Console
             break;
             case 'key:generate':
                 static::consoleEnv();
-                static::runSystemCommand(static::$phpCommand . 'key/prepare');
+                static::runSystemCommand(Console::phpCommand() . 'key/prepare');
 
                 if ($arg2 == "--regenerate") {
-                    static::runSystemCommand(static::$phpCommand . 'key/regenerate');
+                    static::runSystemCommand(Console::phpCommand() . 'key/regenerate');
                     exit;
                 }
 
-                static::runSystemCommand(static::$phpCommand . 'key');
+                static::runSystemCommand(Console::phpCommand() . 'key');
             break;
             case 'migrate':
                 static::consoleEnv();
-                static::runSystemCommand(static::$phpCommand . 'migrate');
+                static::runSystemCommand(Console::phpCommand() . 'migrate');
             break;
             case 'list:routes':
-                static::runSystemCommand(static::$phpCommand . 'routes');
+                static::runSystemCommand(Console::phpCommand() . 'routes');
             break;
             case 'app:on':
-                static::runSystemCommand(static::$phpCommand . 'maintenance/on');
+                static::runSystemCommand(Console::phpCommand() . 'maintenance/on');
             break;
             case 'app:off':
-                static::runSystemCommand(static::$phpCommand . 'maintenance/off');
+                static::runSystemCommand(Console::phpCommand() . 'maintenance/off');
             break;
             case 'app:to-production':
-                static::runSystemCommand(static::$phpCommand . 'environment/production');
+                static::runSystemCommand(Console::phpCommand() . 'environment/production');
             break;
             case 'app:to-testing':
-                static::runSystemCommand(static::$phpCommand . 'environment/testing');
+                static::runSystemCommand(Console::phpCommand() . 'environment/testing');
             break;
             case 'app:to-development':
-                static::runSystemCommand(static::$phpCommand . 'environment/development');
+                static::runSystemCommand(Console::phpCommand() . 'environment/development');
             break;
             case 'resource:link':
                 static::consoleEnv();
-                static::runSystemCommand(static::$phpCommand . 'create/resourcelink');
+                static::runSystemCommand(Console::phpCommand() . 'create/resourcelink');
             break;
             case 'use:command':
                 if (empty($arg2)) {
                     echo ConsoleColor::red("No arguments provided!") . "\n";
                     exit;
                 }
-                static::runSystemCommand(static::$phpCommand . $arg2);
+                static::runSystemCommand(Console::phpCommand() . $arg2);
             break;
             case 'git:init':
                 static::consoleEnv();
@@ -308,7 +313,7 @@ class Console
             $with = $args[1];
         }
 
-        $command = static::$phpCommand . 'create/createpackage/' . $name . '/' . $type . '/' . $with;
+        $command = Console::phpCommand() . 'create/createpackage/' . $name . '/' . $type . '/' . $with;
         static::runSystemCommand($command);
     }
 
@@ -331,7 +336,7 @@ class Console
             $with = $args[1];
         }
 
-        $command = static::$phpCommand . 'create/createmodule/' . $name . '/' . $type . '/' . $with;
+        $command = Console::phpCommand() . 'create/createmodule/' . $name . '/' . $type . '/' . $with;
         static::runSystemCommand($command);
     }
 
@@ -361,7 +366,7 @@ class Console
         }
         
         $module = str_replace('=',':', $module);
-        $command = static::$phpCommand . 'create/createcontroller/' . $module . '/' . $controllerName . '/' . $addController;
+        $command = Console::phpCommand() . 'create/createcontroller/' . $module . '/' . $controllerName . '/' . $addController;
         static::runSystemCommand($command);
     }
 
@@ -403,7 +408,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createmodel/' . $module . '/' . $modelName . '/' . $modelType. '/' . $removeModel;
+        $command = Console::phpCommand() . 'create/createmodel/' . $module . '/' . $modelName . '/' . $modelType. '/' . $removeModel;
         static::runSystemCommand($command);
     }
 
@@ -427,7 +432,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createservice/' . $module . '/' . $serviceName;
+        $command = Console::phpCommand() . 'create/createservice/' . $module . '/' . $serviceName;
         static::runSystemCommand($command);
     }
 
@@ -457,7 +462,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createaction/' . $module . '/' . $actionName . '/' . $actionType;
+        $command = Console::phpCommand() . 'create/createaction/' . $module . '/' . $actionName . '/' . $actionType;
         static::runSystemCommand($command);
     }
 
@@ -481,7 +486,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createlibrary/' . $module . '/' . $libraryName;
+        $command = Console::phpCommand() . 'create/createlibrary/' . $module . '/' . $libraryName;
         static::runSystemCommand($command);
     }
 
@@ -511,7 +516,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createhelper/' . $module . '/' . $helperName . '/' . $helperType;
+        $command = Console::phpCommand() . 'create/createhelper/' . $module . '/' . $helperName . '/' . $helperType;
         static::runSystemCommand($command);
     }
 
@@ -535,7 +540,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createform/' . $module . '/' . $formName;
+        $command = Console::phpCommand() . 'create/createform/' . $module . '/' . $formName;
         static::runSystemCommand($command);
     }
 
@@ -565,7 +570,7 @@ class Console
         }
 
         $module = str_replace('=', ':', $module);
-        $command = static::$phpCommand . 'create/createrule/' . $module . '/' . $ruleName;
+        $command = Console::phpCommand() . 'create/createrule/' . $module . '/' . $ruleName;
         static::runSystemCommand($command);
     }
 
@@ -596,7 +601,7 @@ class Console
             exit;
         }
 
-        $command = static::$phpCommand . 'create/createmiddleware/' . $name . '/' . $type;
+        $command = Console::phpCommand() . 'create/createmiddleware/' . $name . '/' . $type;
         static::runSystemCommand($command);
     }
 
@@ -627,7 +632,7 @@ class Console
             exit;
         }
 
-        $command = static::$phpCommand . 'create/createenum/' . $name . '/' . $type;
+        $command = Console::phpCommand() . 'create/createenum/' . $name . '/' . $type;
         static::runSystemCommand($command);
     }
 
@@ -649,7 +654,7 @@ class Console
             exit;
         }
 
-        $command = static::$phpCommand . 'create/createjsondb/' . $name;
+        $command = Console::phpCommand() . 'create/createjsondb/' . $name;
         static::runSystemCommand($command);
     }
 
@@ -675,7 +680,7 @@ class Console
             exit;
         }
 
-        $command = static::$phpCommand . 'create/createmigration/' . $name . '/' . $type;
+        $command = Console::phpCommand() . 'create/createmigration/' . $name . '/' . $type;
         static::runSystemCommand($command);
     }
 
@@ -685,7 +690,7 @@ class Console
         $steps = $args[1];
 
         if ($key == null) {
-            $command = static::$phpCommand . 'migration/run';
+            $command = Console::phpCommand() . 'migration/run';
             static::runSystemCommand($command);
             exit;
         }
@@ -710,13 +715,13 @@ class Console
             }
 
             if (!empty($step) && !is_string($step) && is_infinite($step)) {
-                $command = static::$phpCommand . 'migration/rollback/' . $step;
+                $command = Console::phpCommand() . 'migration/rollback/' . $step;
                 static::runSystemCommand($command);
                 exit;
             }
   
             if (!empty($step) && is_numeric($step)) {
-                $command = static::$phpCommand . 'migration/rollback/' . $step;
+                $command = Console::phpCommand() . 'migration/rollback/' . $step;
                 static::runSystemCommand($command);
                 exit;
             }
@@ -729,31 +734,31 @@ class Console
         }
 
         if ($key === '--later') {
-            $command = static::$phpCommand . 'migration/future';
+            $command = Console::phpCommand() . 'migration/future';
             static::runSystemCommand($command);
             exit;
         }
 
         if ($key === '--status') {
-            $command = static::$phpCommand . 'migration/status';
+            $command = Console::phpCommand() . 'migration/status';
             static::runSystemCommand($command);
             exit;
         }
 
         if ($key === '--reset') {
-            $command = static::$phpCommand . 'migration/reset';
+            $command = Console::phpCommand() . 'migration/reset';
             static::runSystemCommand($command);
             exit;
         }
 
         if ($key === '--latest') {
-            $command = static::$phpCommand . 'migration/latest';
+            $command = Console::phpCommand() . 'migration/latest';
             static::runSystemCommand($command);
             exit;
         }
 
         if ($key === '--truncate') {
-            $command = static::$phpCommand . 'migration/truncate';
+            $command = Console::phpCommand() . 'migration/truncate';
             static::runSystemCommand($command);
             exit;
         }
@@ -764,7 +769,7 @@ class Console
         
         if ($steps[0] === '--step' && !empty($steps[1]) && is_numeric($steps[1])) {
             $steps = $steps[1];
-            $command = static::$phpCommand . 'migration/run/' . $steps;
+            $command = Console::phpCommand() . 'migration/run/' . $steps;
             static::runSystemCommand($command);
             exit;
         }
@@ -804,9 +809,9 @@ class Console
             $viewType = $args[2];
         }
 
-        $filename = str_replace('/', '::', $filename);
+        $filename = str_replace('/', '-', $filename);
         $module = empty($module) ? 'empty' : $module;
-        $command = static::$phpCommand . 'create/createview/' . $module . '/' . $filename . '/' . $viewType;
+        $command = Console::phpCommand() . 'create/createview/' . $module . '/' . $filename . '/' . $viewType;
 
         static::runSystemCommand($command);
     }
@@ -827,7 +832,7 @@ class Console
 
             $type = str_replace('-', '', $type);
 
-            $command = static::$phpCommand . 'cache/clearpath/' . $type;
+            $command = Console::phpCommand() . 'cache/clearpath/' . $type;
             static::runSystemCommand($command);
             exit;
         }
@@ -836,7 +841,7 @@ class Console
 
             $type = str_replace('-', '', $type);
 
-            $command = static::$phpCommand . 'cache/clearpath/' . $type;
+            $command = Console::phpCommand() . 'cache/clearpath/' . $type;
             static::runSystemCommand($command);
             exit;
         }
@@ -845,7 +850,7 @@ class Console
 
             $type = str_replace('-', '', $type);
 
-            $command = static::$phpCommand . 'cache/clearpath/' . $type;
+            $command = Console::phpCommand() . 'cache/clearpath/' . $type;
             static::runSystemCommand($command);
             exit;
         }
@@ -854,7 +859,7 @@ class Console
 
             $type = str_replace('-', '', $type);
 
-            $command = static::$phpCommand . 'cache/clearpath/' . $type;
+            $command = Console::phpCommand() . 'cache/clearpath/' . $type;
             static::runSystemCommand($command);
             exit;
         }
