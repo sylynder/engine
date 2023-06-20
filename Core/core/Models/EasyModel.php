@@ -66,6 +66,13 @@ class EasyModel extends Model
     public $returnAs = 'object';
 
     /**
+     * Protected fields
+     *
+     * @var array
+     */
+    public $protected = [];
+
+    /**
      * Construct the CI_Model
      */
     public function __construct()
@@ -417,6 +424,25 @@ class EasyModel extends Model
     }
 
     /**
+     * Protect fields by removing them from $row
+     *
+     * @param array|object $row
+     * @return mixed
+     */
+    public function protectFields($row)
+    {
+        foreach ($this->protected as $attr) {
+            if (is_object($row)) {
+                unset($row->$attr);
+            } else {
+                unset($row[$attr]);
+            }
+        }
+
+        return $row;
+    }
+
+    /**
      * Grabs data from a table
      *       OR a single record by passing $id,
      *       OR a different field than the primaryKey by passing two paramters
@@ -750,8 +776,17 @@ class EasyModel extends Model
      */
     public function create($data)
     {
+        
+
         $this->db->set($data)->insert($this->table);
-        return $this->selectLast('*');
+        
+        $data = $this->selectLast('*');
+
+        if (!empty($this->protected)) {
+            return $this->protectFields($data);
+        }
+
+        return $data;
     }
 
     /**
