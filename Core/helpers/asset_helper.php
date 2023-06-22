@@ -9,12 +9,21 @@ if ( ! function_exists('public_path'))
      * Path to the public directory
      *
      * @param string $path
+     * @param string $resource
      * @return string
      */
-    function public_path($path = '')
+    function public_path($path = '', $resource = '')
     {   
+        if ( ! empty($path) && !empty($resource)) {
+            return FCPATH . $path . DIRECTORY_SEPARATOR . $resource; 
+        }
+
         if ( ! empty($path) && is_dir(FCPATH . $path)) {
             return FCPATH . $path . DIRECTORY_SEPARATOR;
+        }
+
+        if ( ! empty($path) && is_file(FCPATH . $path)) {
+            return FCPATH . $path;
         }
 
         if (empty($path)) {
@@ -64,12 +73,22 @@ if ( ! function_exists('writable_path'))
      * Path to the writable directory
      *
      * @param string $path
+     * @param string $resource
      * @return string
      */
-    function writable_path($path = '')
+    function writable_path($path = '', $resource = '')
     {   
+
+        if ( ! empty($path) && !empty($resource)) {
+            return WRITABLEPATH . $path . DIRECTORY_SEPARATOR . $resource; 
+        }
+
         if ( ! empty($path) && is_dir(WRITABLEPATH . $path)) {
             return WRITABLEPATH . $path . DIRECTORY_SEPARATOR;
+        }
+
+        if ( ! empty($path) && is_file(WRITABLEPATH . $path)) {
+            return WRITABLEPATH . $path;
         }
 
         return;
@@ -107,7 +126,7 @@ if ( ! function_exists('resource'))
         }
 
         if ( ! is_null($item)) {
-            $path .= '/'.$item;
+            $path .= DIRECTORY_SEPARATOR .$item;
         }
         
         return (!empty($path)) ? load_path($path) : site_url() . ASSETS;
