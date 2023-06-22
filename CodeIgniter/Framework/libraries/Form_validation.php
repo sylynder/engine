@@ -2044,6 +2044,25 @@ class CI_Form_validation
 	// --------------------------------------------------------------------
 
 	/**
+	 * Valid Human URL
+	 *
+	 * @param	string	$str
+	 * @return	bool
+	 */
+	public function valid_human_url($str)
+	{
+		$pattern = "/^(?:(?:https?|ftp):\/\/)?(?:www\.)?([^\s\/$.?#].[^\s]*)$/i";
+
+		if (!preg_match($pattern, $str)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Valid Email
 	 *
 	 * @param	string
