@@ -50,7 +50,7 @@ if ( ! function_exists('use_table'))
 			return $model;
 		}
 
-		$model->table = $table;
+		$model->{'table'} = $table; // bypass dynamic property error
 
 		return $model;
 	}
@@ -151,7 +151,7 @@ if ( ! function_exists( 'max_id' ))
 		if($select_as != null) {
 			$maxid = ci()->db->query('SELECT MAX(id) AS '.$select_as.' FROM ' . $table)->row()->$select_as; 
 		} else {
-			$maxid = ci()->db->query('SELECT MAX(id) AS biggest  FROM '. $table)->row(); 
+			$maxid = ci()->db->query('SELECT MAX(id) AS biggest  FROM '. $table)->row()->biggest; 
         }
         
         return $maxid;
