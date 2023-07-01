@@ -403,10 +403,24 @@ $e404 = false;
 $class = ucfirst($RTR->class);
 $method = $RTR->method;
 
-if (empty($class) or !file_exists(APPPATH . 'controllers/' . $RTR->directory . $class . '.php')) {
+// Specify default paths to load controllers when they are not module controllers
+$corePathController = APPPATH . 'controllers/' . $RTR->directory . $class . '.php';
+$appRootController = APPROOT . 'Controllers/' . $RTR->directory . $class . '.php';
+
+if (
+	(empty($class) or !file_exists($corePathController))
+	and (empty($class) or !file_exists($appRootController))
+) {
 	$e404 = true;
 } else {
-	require_once(APPPATH . 'controllers/' . $RTR->directory . $class . '.php');
+
+	if (file_exists($corePathController)) {
+		require_once($corePathController);
+	}
+
+	if (file_exists($appRootController)) {
+		require_once($appRootController);
+	}
 
 	if (!class_exists($class, false) or $method[0] === '_' or method_exists('CI_Controller', $method)) {
 		$e404 = true;
