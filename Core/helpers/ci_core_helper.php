@@ -291,7 +291,7 @@ if ( ! function_exists('app_url'))
 if ( ! function_exists('url')) 
 {
     /**
-     * alias of site_url
+     * Improved alias of site_url
      *
      * @param string $uri
      * @param bool $protocol
@@ -299,11 +299,25 @@ if ( ! function_exists('url'))
      */
     function url($uri = '', $param = '', $protocol = null)
     {
-        $uri = is_array($uri) ? $uri : dot2slash($uri);
-
         if ($uri === 'void') {
             return void_url();
         }
+
+        // Detect if the $uri starts with 'https://' or 'http://'
+        if (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0) {
+            return $uri;
+        }
+        
+        // Detect if the $uri starts with 'www.'
+        if (strpos($uri, 'www.') === 0) {
+            return 'https://' . $uri;
+        }
+
+        if (is_array($uri)) {
+            return site_url($uri, $protocol);
+        }
+
+        $uri = dot2slash($uri);
 
         if (!empty($param) && $protocol === null) {
             return site_url($uri.'/'. $param);
