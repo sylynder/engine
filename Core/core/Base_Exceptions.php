@@ -110,7 +110,7 @@ class Base_Exceptions extends \CI_Exceptions
 
 		$directory = (get_instance()) ? get_instance()->router->directory : '';
 
-		$location = str_replace('../', '', $directory);
+		$location = str_replace('../', '', (string) $directory);
 		
 		$filepath = function_exists('session') ? session('__view_path') : $exception->getFile();
 		$line = $exception->getLine();
@@ -178,7 +178,7 @@ class Base_Exceptions extends \CI_Exceptions
 		
 		$directory = (get_instance()) ? get_instance()->router->directory : '';
 
-		$location = str_replace('../', '', $directory);
+		$location = str_replace('../', '', (string) $directory);
 		
 		$filelocation = $filepath;
 		$severity = isset($this->levels[$severity]) ? $this->levels[$severity] : $severity;
@@ -195,7 +195,7 @@ class Base_Exceptions extends \CI_Exceptions
 		// For safety reasons we don't show the full file path in non-CLI requests
 		if (!is_cli()) {
 
-			$filepath = str_replace('\\', '/', $filepath);
+			$filepath = str_replace('\\', '/', (string) $filepath);
 
 			if (false !== strpos($filepath, '/')) {
 				$x = explode('/', $filepath);
