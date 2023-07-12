@@ -227,15 +227,22 @@ class MX_Router extends \CI_Router
 			}
 		}
 
-		/* application controllers sub-directory exists? */
-		if (is_dir(APPPATH.'controllers/'.$module.'/'))
+		/* app/Controllers controllers sub-directory exists? */
+		if (is_dir(APPROOT.'Controllers/'.ucfirst($module).'/'))
 		{
-			$this->directory = $module.'/';
+			$this->directory = ucfirst($module).'/';
 			return array_slice($segments, 1);
 		}
 
 		if (is_file(APPROOT . 'Controllers/' . ucfirst($module) . $ext)) {
 			return $segments;
+		}
+
+		/* application controllers sub-directory exists? */
+		if (is_dir(APPPATH.'controllers/'.$module.'/'))
+		{
+			$this->directory = $module.'/';
+			return array_slice($segments, 1);
 		}
 
 		/* application controller exists? */
