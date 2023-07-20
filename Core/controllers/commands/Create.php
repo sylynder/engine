@@ -864,6 +864,44 @@ class Create extends ConsoleController
     }
 
     /**
+     * Create A Non Module Controller
+     *
+     * @param string $controllerName
+     * @param string $addController
+     * @param string $location
+     * @return void
+     */
+    public function createNonModuleController($controllerName = '', $addController = '', $location = 'App/Controllers')
+    {
+        $created = '';
+
+        $controllerName = ucwords($controllerName);
+        $fileType = "web_controller";
+
+        if ($addController == '--addcontroller') {
+            $controllerName = Inflector::singularize($controllerName) . 'Controller';
+        }
+
+        $this->controllers = 'Controllers';
+        $controllerDirectory = $this->createAppRootDirectory($this->controllers);
+
+        if (file_exists($controllerDirectory . DS . $controllerName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($controllerName). " Controller exists already in the " . $location . " directory");
+            return;
+        }
+
+        if ($controllerDirectory && is_dir($controllerDirectory)) {
+            $filePath = $controllerDirectory . DS . $controllerName;
+            $created = $this->createFile($filePath, $fileType, $this->controller); 
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($controllerName) . " Controller created successfully ");
+            return;
+        }
+    }
+
+    /**
      * Create Model
      *
      * @param string $location
@@ -1401,7 +1439,7 @@ class Create extends ConsoleController
         $moduleName = '';
         $moduleType = '';
         $created = '';
-        $viewFile = str_replace('::', '/', $viewFile);
+        $viewFile = str_replace('-', '/', $viewFile);
 
         $pathinfo = (object) pathinfo($viewFile);
 

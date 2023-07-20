@@ -345,6 +345,13 @@ class Console
         $module = $args[0];
         $controllerName = '';
 
+        $nonModuleController = str_contains($args[0], '--name');
+
+        if ($nonModuleController) {
+            $args[2] = $args[1];
+            $args[1] = $args[0];
+        }
+
         $controller = str_replace('=', ':', $args[1]);
         $controller = explode(':', $controller);
 
@@ -363,6 +370,12 @@ class Console
 
         if (isset($args[2])) {
             $addController = $args[2];
+        }
+
+        if ($nonModuleController) {
+            $command = Console::phpCommand() . 'create/createnonmodulecontroller/' . $controllerName . '/' . $addController;
+            static::runSystemCommand($command);
+            return;
         }
         
         $module = str_replace('=',':', $module);
