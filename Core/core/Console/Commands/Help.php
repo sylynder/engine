@@ -496,6 +496,11 @@ class Help extends Console
 
 
             {$examples}
+                * Add controllers to App/Controllers directory *
+                php webby create:controller --name=cars
+                php webby create:controller --name=cars --addcontroller
+
+                * Add module controllers *
                 php webby create:controller web:books --name=books
                 php webby create:controller web:console --name=schedule
                 php webby create:controller api:v1 --name=send
