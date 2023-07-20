@@ -492,7 +492,7 @@ class Help extends Console
                 Create controller by specifying which module it belongs with
 
             {$usage}
-                php webby create:controller <module-type:module-name> <controller-name>
+                php webby create:controller <module-type:module-name> <controller-name> <options>
 
 
             {$examples}
@@ -522,9 +522,14 @@ class Help extends Console
                 Create model by specifying which module it belongs with.
 
             {$usage}
-                php webby create:model <module-type:module-name> <model-name>
+                php webby create:model <module-type:module-name> <model-name> <options>
 
             {$examples}
+                * Add models to App/Models directory *
+                php webby create:model --name=books
+                php webby create:model --name=books --easy --remove-model
+
+                * Add module models *
                 php webby create:model web:app --name=books
                 php webby create:model console:tasks --name=schedule
                 php webby create:model api:v1 --name=send
