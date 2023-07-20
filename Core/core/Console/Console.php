@@ -388,6 +388,14 @@ class Console
         $module = $args[0];
         $modelName = '';
 
+        $nonModuleModel = str_contains($args[0], '--name');
+
+        if ($nonModuleModel) {
+            $args[3] = $args[2];
+            $args[2] = $args[1];
+            $args[1] = $args[0];
+        }
+
         $model = str_replace('=', ':', $args[1]);
         $model = explode(':', $model);
 
@@ -418,6 +426,12 @@ class Console
             $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:model", 'light', 'red') . " \n";
             echo $output . "\n";
             exit;
+        }
+
+        if ($nonModuleModel) {
+            $command = Console::phpCommand() . 'create/createnonmodulemodel/' . $modelName . '/' . $modelType. '/' . $removeModel;
+            static::runSystemCommand($command);
+            return;
         }
 
         $module = str_replace('=', ':', $module);

@@ -28,6 +28,13 @@ class Create extends ConsoleController
     private $fileExtention = '.php';
 
     /**
+     * Set Namespace variable
+     *
+     * @var string
+     */
+    private $namespace = '';
+
+    /**
      * Config variable
      *
      * @var string
@@ -239,6 +246,10 @@ class Create extends ConsoleController
 
         $contents = ($stubType === $this->view) ? '' : "<?php \n\n";
         
+        if (!empty($this->namespace)) {
+            $contents .= "namespace " . $this->namespace . "; \n\n";
+        }
+
         $fileContent = $this->fileContent($fileType, $className, $stubType);
         $contents .= $fileContent;
         
@@ -897,6 +908,49 @@ class Create extends ConsoleController
 
         if ($created) {
             $this->successOutput(ucfirst($controllerName) . " Controller created successfully ");
+            return;
+        }
+    }
+
+    /**
+     * Create A Non Module Model
+     *
+     * @param string $modelName
+     * @param string $modelType
+     * @param string $removeModel
+     * @param string $location
+     * @return void
+     */
+    public function createNonModuleModel($modelName = '', $modelType = '--easy', $removeModel = '', $location = 'App/Models') 
+    {
+
+        $created = '';
+        $namespace = 'App\Models';
+        $modelName = ucwords($modelName);
+        
+        $this->model = 'Models';
+        $this->namespace = $namespace;
+        $modelDirectory = $this->createAppRootDirectory($this->model);
+
+        if ($removeModel == '--remove-model') {
+            $modelName = $modelName;
+        } else {
+            $modelName = Inflector::singularize($modelName) . 'Model';
+        }
+
+        if (file_exists($modelDirectory . DS . $modelName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($modelName) . " exists already in the " . $location . " directory");
+            return;
+        }
+
+        if ($modelDirectory && is_dir($modelDirectory)) {
+            $filePath = $modelDirectory . DS . $modelName;
+            $modelType = str_replace('-', '', $modelType);
+            $created = $this->createFile($filePath, strtolower($modelType . '_') . 'model', $this->model);
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($modelName) . " " .ucfirst($modelType) . " Model created successfully ");
             return;
         }
     }
