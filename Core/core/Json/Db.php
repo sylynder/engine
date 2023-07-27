@@ -95,7 +95,7 @@ class Db
      *
      * @var
      */
-    protected $jsonDirectory;
+    public $jsonDirectory;
 
     /**
      * JSON Options variable
