@@ -256,6 +256,30 @@ if ( ! function_exists('import'))
 
 // ------------------------------------------------------------------------
 
+if ( ! function_exists('calendar'))
+{
+
+	/**
+	 * Calendar class helper function
+	 *
+	 * @param array $config
+	 * @return mixed
+	 */
+	function calendar($config = [])
+	{
+
+		$calendar =& load_class('Calendar');
+
+		if (!empty($config)) {
+			$calendar->initialize($config);
+		}
+
+		return $calendar;
+	}
+}
+
+// ------------------------------------------------------------------------
+
 if ( ! function_exists('load_class'))
 {
 	/**
