@@ -56,6 +56,13 @@ class Db
     private $select;
 
     /**
+     * Flag to determine return type
+     *
+     * @var boolean
+     */
+    private $returnObject = false;
+
+    /**
      * Merge variable
      *
      * @var
@@ -897,6 +904,17 @@ class Db
         }
 
         return $content;
+    }
+
+    /**
+     * Get final results as an object
+     *
+     * @return object
+     */
+    public function asObject()
+    {
+        $this->returnObject = true;
+        return $this;
     }
 
     /**
