@@ -950,6 +950,11 @@ class Db
         $content = $this->processOrderBy($content);
 
         $this->flushIndexes(true);
+
+        if ($this->returnObject) {
+            $content = objectify($content, true);
+        }
+
         return $content;
     }
 
