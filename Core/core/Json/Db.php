@@ -918,6 +918,28 @@ class Db
     }
 
     /**
+     * A simple way to grab the first 
+     * result of a search only.
+     *
+     * @return array|object|null
+     */
+    public function first()
+    {
+        $rows = $this->get();
+
+        if (is_array($rows) && count($rows) == 1) {
+            return $rows[0];
+        }
+
+        if ($rows instanceof \stdClass) {
+            $rows = (array) $rows;
+        }
+        
+        return reset($rows) ?: null;
+
+    }
+
+    /**
      * Get final results
      *
      * @return array|object
