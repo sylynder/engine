@@ -852,10 +852,10 @@ class Arrayz
 	public function get($returnObject = true)
 	{
 		if ($returnObject) {
-			return json_decode(
-				json_encode($this->source)
-			);
+			return objectify($this->source, true);
 		}
+
+		return $this->source;
 	}
 
 	/**
