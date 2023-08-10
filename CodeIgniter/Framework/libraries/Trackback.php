@@ -109,14 +109,19 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Send Trackback
-	 *
-	 * @param	array
-	 * @return	bool
-	 */
-	public function send($tb_data)
+	* Send Trackback
+	*
+	* @param	array
+	*/
+	public function send($tb_data): bool
 	{
-		if ( ! is_array($tb_data))
+		$url = '';
+		$title = '';
+		$blog_name = '';
+		$excerpt = '';
+		$ping_url = [];
+
+  		if ( ! is_array($tb_data))
 		{
 			$this->set_error('The send() method must be passed an array');
 			return false;
@@ -131,37 +136,29 @@ class CI_Trackback {
 				return false;
 			}
 
-			switch ($item)
-			{
-				case 'ping_url':
-					$$item = $this->extract_urls($tb_data[$item]);
-					break;
-				case 'excerpt':
-					$$item = $this->limit_characters($this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-					break;
-				case 'url':
-					$$item = str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes($tb_data[$item]))));
-					break;
-				default:
-					$$item = $this->convert_xml(strip_tags(stripslashes($tb_data[$item])));
-					break;
-			}
+			${$item} = match ($item) {
+				'ping_url' => $this->extract_urls($tb_data[$item]),
+				'excerpt' => $this->limit_characters($this->convert_xml(strip_tags(stripslashes((string) $tb_data[$item])))),
+				'url' => str_replace('&#45;', '-', $this->convert_xml(strip_tags(stripslashes((string) $tb_data[$item])))),
+				default => $this->convert_xml(strip_tags(stripslashes((string) $tb_data[$item]))),
+			};
 
 			// Convert High ASCII Characters
-			if ($this->convert_ascii === true && in_array($item, ['excerpt', 'title', 'blog_name'], true))
+			if ($this->convert_ascii && in_array($item, ['excerpt', 'title', 'blog_name'], true))
 			{
-				$$item = $this->convert_ascii($$item);
+				${$item} = $this->convert_ascii(${$item});
 			}
 		}
 
 		// Build the Trackback data string
-		$charset = isset($tb_data['charset']) ? $tb_data['charset'] : $this->charset;
+		$charset = $tb_data['charset'] ?? $this->charset;
 
 		$data = 'url='.rawurlencode($url).'&title='.rawurlencode($title).'&blog_name='.rawurlencode($blog_name)
-			.'&excerpt='.rawurlencode($excerpt).'&charset='.rawurlencode($charset);
+			.'&excerpt='.rawurlencode($excerpt).'&charset='.rawurlencode((string) $charset);
 
 		// Send Trackback(s)
 		$return = true;
+
 		if (count($ping_url) > 0)
 		{
 			foreach ($ping_url as $url)
@@ -179,16 +176,14 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Receive Trackback  Data
-	 *
-	 * This function simply validates the incoming TB data.
-	 * It returns false on failure and true on success.
-	 * If the data is valid it is set to the $this->data array
-	 * so that it can be inserted into a database.
-	 *
-	 * @return	bool
-	 */
-	public function receive()
+	* Receive Trackback  Data
+	*
+	* This function simply validates the incoming TB data.
+	* It returns false on failure and true on success.
+	* If the data is valid it is set to the $this->data array
+	* so that it can be inserted into a database.
+	*/
+	public function receive(): bool
 	{
 		foreach (['url', 'title', 'blog_name', 'excerpt'] as $val)
 		{
@@ -198,21 +193,21 @@ class CI_Trackback {
 				return false;
 			}
 
-			$this->data['charset'] = isset($_POST['charset']) ? strtoupper(trim($_POST['charset'])) : 'auto';
+			$this->data['charset'] = isset($_POST['charset']) ? strtoupper(trim((string) $_POST['charset'])) : 'auto';
 
 			if ($val !== 'url' && MB_ENABLED === true)
 			{
-				if (MB_ENABLED === true)
+				if (MB_ENABLED)
 				{
-					$_POST[$val] = mb_convert_encoding($_POST[$val], $this->charset, $this->data['charset']);
+					$_POST[$val] = mb_convert_encoding((string) $_POST[$val], $this->charset, $this->data['charset']);
 				}
 				elseif (ICONV_ENABLED === true)
 				{
-					$_POST[$val] = @iconv($this->data['charset'], $this->charset.'//IGNORE', $_POST[$val]);
+					$_POST[$val] = @iconv($this->data['charset'], $this->charset.'//IGNORE', (string) $_POST[$val]);
 				}
 			}
 
-			$_POST[$val] = ($val !== 'url') ? $this->convert_xml(strip_tags($_POST[$val])) : strip_tags($_POST[$val]);
+			$_POST[$val] = ($val !== 'url') ? $this->convert_xml(strip_tags((string) $_POST[$val])) : strip_tags((string) $_POST[$val]);
 
 			if ($val === 'excerpt')
 			{
@@ -226,18 +221,17 @@ class CI_Trackback {
 	}
 
 	// --------------------------------------------------------------------
-
+	
 	/**
-	 * Send Trackback Error Message
-	 *
-	 * Allows custom errors to be set. By default it
-	 * sends the "incomplete information" error, as that's
-	 * the most common one.
-	 *
-	 * @param	string
-	 * @return	void
-	 */
-	public function send_error($message = 'Incomplete Information')
+	* Send Trackback Error Message
+	*
+	* Allows custom errors to be set. By default it
+	* sends the "incomplete information" error, as that's
+	* the most common one.
+	*
+	* @param	string
+	*/
+	public function send_error($message = 'Incomplete Information'): never
 	{
 		exit('<?xml version="1.0" encoding="utf-8"?'.">\n<response>\n<error>1</error>\n<message>".$message."</message>\n</response>");
 	}
@@ -245,14 +239,12 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Send Trackback Success Message
-	 *
-	 * This should be called when a trackback has been
-	 * successfully received and inserted.
-	 *
-	 * @return	void
-	 */
-	public function send_success()
+ 	* Send Trackback Success Message
+	*
+	* This should be called when a trackback has been
+	* successfully received and inserted.
+	*/
+	public function send_success(): never
 	{
 		exit('<?xml version="1.0" encoding="utf-8"?'.">\n<response>\n<error>0</error>\n</response>");
 	}
@@ -267,24 +259,23 @@ class CI_Trackback {
 	 */
 	public function data($item)
 	{
-		return isset($this->data[$item]) ? $this->data[$item] : '';
+		return $this->data[$item] ?? '';
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Process Trackback
-	 *
-	 * Opens a socket connection and passes the data to
-	 * the server. Returns true on success, false on failure
-	 *
-	 * @param	string
-	 * @param	string
-	 * @return	bool
-	 */
-	public function process($url, $data)
+	* Process Trackback
+	*
+	* Opens a socket connection and passes the data to
+	* the server. Returns true on success, false on failure
+	*
+	* @param	string
+	* @param	string
+	*/
+	public function process($url, $data): bool
 	{
-		$target = parse_url($url);
+		$target = parse_url((string) $url);
 
 		// Open the socket
 		if ( ! $fp = @fsockopen($target['host'], 80))
@@ -294,22 +285,25 @@ class CI_Trackback {
 		}
 
 		// Build the path
-		$path = isset($target['path']) ? $target['path'] : $url;
-		empty($target['query']) OR $path .= '?'.$target['query'];
+		$path = $target['path'] ?? $url;
+
+		if (!empty($target['query'])) {
+			$path .= '?'.$target['query'];
+		}
 
 		// Add the Trackback ID to the data string
-		if ($id = $this->get_id($url))
+		if (($id = $this->get_id($url)) !== '' && ($id = $this->get_id($url)) !== '0')
 		{
 			$data = 'tb_id='.$id.'&'.$data;
 		}
 
 		// Transfer the data
-		fputs($fp, 'POST '.$path." HTTP/1.0\r\n");
-		fputs($fp, 'Host: '.$target['host']."\r\n");
-		fputs($fp, "Content-type: application/x-www-form-urlencoded\r\n");
-		fputs($fp, 'Content-length: '.strlen($data)."\r\n");
-		fputs($fp, "Connection: close\r\n\r\n");
-		fputs($fp, $data);
+		fwrite($fp, 'POST '.$path." HTTP/1.0\r\n");
+		fwrite($fp, 'Host: '.$target['host']."\r\n");
+		fwrite($fp, "Content-type: application/x-www-form-urlencoded\r\n");
+		fwrite($fp, 'Content-length: '.strlen((string) $data)."\r\n");
+		fwrite($fp, "Connection: close\r\n\r\n");
+		fwrite($fp, (string) $data);
 
 		// Was it successful?
 
@@ -335,40 +329,42 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Extract Trackback URLs
-	 *
-	 * This function lets multiple trackbacks be sent.
-	 * It takes a string of URLs (separated by comma or
-	 * space) and puts each URL into an array
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function extract_urls($urls)
+	* Extract Trackback URLs
+	*
+	* This function lets multiple trackbacks be sent.
+	* It takes a string of URLs (separated by comma or
+	* space) and puts each URL into an array
+	*
+	* @param	string
+	* @return mixed[]
+	*/
+	public function extract_urls($urls): array
 	{
 		// Remove the pesky white space and replace with a comma, then replace doubles.
-		$urls = str_replace(',,', ',', preg_replace('/\s*(\S+)\s*/', '\\1,', $urls));
+		$urls = str_replace(',,', ',', preg_replace('/\s*(\S+)\s*/', '\\1,', (string) $urls));
 
 		// Break into an array via commas and remove duplicates
 		$urls = array_unique(preg_split('/[,]/', rtrim($urls, ',')));
 
-		array_walk($urls, [$this, 'validate_url']);
+		array_walk($urls, function (&$url) : void {
+			$this->validate_url($url);
+		});
+		
 		return $urls;
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Validate URL
-	 *
-	 * Simply adds "http://" if missing
-	 *
-	 * @param	string
-	 * @return	void
-	 */
-	public function validate_url(&$url)
+	* Validate URL
+	*
+	* Simply adds "http://" if missing
+	*
+	* @param	string
+	*/
+	public function validate_url(&$url): void
 	{
-		$url = trim($url);
+		$url = trim((string) $url);
 
 		if (stripos($url, 'http') !== 0)
 		{
@@ -379,18 +375,17 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Find the Trackback URL's ID
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function get_id($url)
+	* Find the Trackback URL's ID
+	*
+	* @param	string
+	*/
+	public function get_id($url): string|bool
 	{
 		$tb_id = '';
-
-		if (strpos($url, '?') !== false)
+		
+		if (str_contains((string) $url, '?'))
 		{
-			$tb_array = explode('/', $url);
+			$tb_array = explode('/', (string) $url);
 			$tb_end   = $tb_array[count($tb_array)-1];
 
 			if ( ! is_numeric($tb_end))
@@ -403,7 +398,7 @@ class CI_Trackback {
 		}
 		else
 		{
-			$url = rtrim($url, '/');
+			$url = rtrim((string) $url, '/');
 
 			$tb_array = explode('/', $url);
 			$tb_id	= $tb_array[count($tb_array)-1];
@@ -414,7 +409,7 @@ class CI_Trackback {
 			}
 		}
 
-		return ctype_digit((string) $tb_id) ? $tb_id : false;
+		return ctype_digit($tb_id) ? $tb_id : false;
 	}
 
 	// --------------------------------------------------------------------
@@ -429,7 +424,7 @@ class CI_Trackback {
 	{
 		$temp = '__TEMP_AMPERSANDS__';
 
-		$str = preg_replace(['/&#(\d+);/', '/&(\w+);/'], $temp.'\\1;', $str);
+		$str = preg_replace(['/&#(\d+);/', '/&(\w+);/'], $temp.'\\1;', (string) $str);
 
 		$str = str_replace(['&', '<', '>', '"', "'", '-'],
 					['&amp;', '&lt;', '&gt;', '&quot;', '&#39;', '&#45;'],
@@ -452,12 +447,12 @@ class CI_Trackback {
 	 */
 	public function limit_characters($str, $n = 500, $end_char = '&#8230;')
 	{
-		if (strlen($str) < $n)
+		if (strlen((string) $str) < $n)
 		{
 			return $str;
 		}
 
-		$str = preg_replace('/\s+/', ' ', str_replace(["\r\n", "\r", "\n"], ' ', $str));
+		$str = preg_replace('/\s+/', ' ', str_replace(["\r\n", "\r", "\n"], ' ', (string) $str));
 
 		if (strlen($str) <= $n)
 		{
@@ -478,21 +473,20 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * High ASCII to Entities
-	 *
-	 * Converts Hight ascii text and MS Word special chars
-	 * to character entities
-	 *
-	 * @param	string
-	 * @return	string
-	 */
-	public function convert_ascii($str)
+	* High ASCII to Entities
+	*
+	* Converts Hight ascii text and MS Word special chars
+	* to character entities
+	*
+	* @param	string
+	*/
+	public function convert_ascii($str): string
 	{
 		$count	= 1;
 		$out	= '';
 		$temp	= [];
 
-		for ($i = 0, $s = strlen($str); $i < $s; $i++)
+		for ($i = 0, $s = strlen((string) $str); $i < $s; ++$i)
 		{
 			$ordinal = ord($str[$i]);
 
@@ -528,12 +522,11 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Set error message
-	 *
-	 * @param	string
-	 * @return	void
-	 */
-	public function set_error($msg)
+	* Set error message
+	*
+	* @param	string
+	*/
+	public function set_error($msg): void
 	{
 		log_message('error', $msg);
 		$this->error_msg[] = $msg;
@@ -542,15 +535,14 @@ class CI_Trackback {
 	// --------------------------------------------------------------------
 
 	/**
-	 * Show error messages
-	 *
-	 * @param	string
-	 * @param	string
-	 * @return	string
-	 */
-	public function display_errors($open = '<p>', $close = '</p>')
+	* Show error messages
+	*
+	* @param	string
+	* @param	string
+	*/
+	public function display_errors($open = '<p>', $close = '</p>'): string
 	{
-		return (count($this->error_msg) > 0) ? $open.implode($close.$open, $this->error_msg).$close : '';
+		return ($this->error_msg !== []) ? $open.implode($close.$open, $this->error_msg).$close : '';
 	}
 
 }
