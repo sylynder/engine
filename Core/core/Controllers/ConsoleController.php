@@ -6,8 +6,7 @@ use Base\Console\ConsoleColor;
 
 class ConsoleController extends Controller
 {
-    
-    private $env = 'development';
+    protected $env = 'development';
 
     public function __construct()
     {
