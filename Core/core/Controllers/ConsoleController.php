@@ -7,7 +7,7 @@ use Base\Console\ConsoleColor;
 class ConsoleController extends Controller
 {
     protected $env = 'development';
-
+        
     public function __construct()
     {
         parent::__construct();
@@ -67,6 +67,10 @@ class ConsoleController extends Controller
     protected function nextline($times = 1)
     {
         $line = " \n";
+
+        if ($times == 0) {
+            return $line = '';
+        }
 
         if ($times > 1) {
             return str_repeat($line, $times);
