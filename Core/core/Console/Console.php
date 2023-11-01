@@ -140,16 +140,16 @@ class Console
                 \Base\Console\Commands\Help::runHelp();
             break;
             case '--version':
-            case '-v':
-                static::consoleEnv();
-
-                if (!empty($arg2)) {
-                    \Base\Console\Commands\Help::whichHelp($arg2);
-                    exit;
-                }
-
-                \Base\Console\Commands\Help::runHelp();
-            break;
+                case '-v':
+                    static::consoleEnv();
+    
+                    if (!empty($arg2)) {
+                        \Base\Console\Commands\Help::whichHelp($arg2);
+                        exit;
+                    }
+    
+                    \Base\Console\Commands\Help::runHelp();
+                break;
             case '--env':
                 static::consoleEnv();
 
@@ -949,7 +949,7 @@ class Console
     }
 
     /**
-     * Serve Webby application
+     * Serve Webby Application
      *
      * @param array $args
      * @return void
@@ -961,26 +961,25 @@ class Console
         $host = static::DEFAULT_HOST;
         $port = 0;
         $number = static::DEFAULT_PORT;
-        
+
         if (isset($args[2]) && $args[2] === '--port') {
             $number = isset($args[3]) ? (int)$args[3] : "";
             $port = (isset($number) && is_int($number)) ? $number : static::DEFAULT_PORT;
             $port = intval($port);
-
         } else if ((isset($args[2]) && ($args[2] === '--host'))
-            && (isset($args[2]) && $args[4] === '--port')
+            && (isset($args[2]) && isset($args[4]) && $args[4] === '--port')
         ) {
-            
             $host = isset($args[3]) ? (string)$args[3] : "localhost";
             $number = isset($args[5]) ? (int)$args[5] : "";
             $port = (isset($number) && is_int($number)) ? $number : static::DEFAULT_PORT;
             $port = intval($port);
-
+        } else if ((isset($args[2]) && ($args[2] === '--host'))) {
+            $host = isset($args[3]) ? (string)$args[3] : "localhost";
+            $port = static::DEFAULT_PORT;
+            $port = intval($port);
         } else {
-            
             $port = $number;
             $port = intval($port);
-
         }
 
         if ($port === 0) {
@@ -1000,7 +999,7 @@ class Console
 
         echo ConsoleColor::green($output) . "\n\n";
 
-        static::runSystemCommand("php -S {$host}:" . $port . " -t " . $dir);
+        static::runSystemCommand('php -S ' . $host .':' . $port . ' -t "' . $dir . '"');
     }
 
     /**
@@ -1065,11 +1064,13 @@ class Console
                 && (isset($args[4]) && $args[4] === '--port')
         ) {
             Console::serve($args);
+        } else if (isset($args[2]) && $args[2] === '--host') {
+            Console::serve($args);
         } else if (isset($args[2]) && $args[2] === '--port' && $args[1] !== 'quit') {
             Console::serve($args);
         } else if (isset($args[1]) && $args[1] === 'serve') {
             Console::serve();
-        } else if (isset($args[1]) && $args[1] === 'set' && @$args[2] === '--env') {
+        } else if (isset($args[1]) && $args[1] === 'set' && isset($args[2]) && $args[2] === '--env') {
             Console::setenv();
         } else if (isset($args[1]) && $args[1] === 'quit') {
             Console::quitServer($args);
