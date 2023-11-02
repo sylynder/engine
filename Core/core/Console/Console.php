@@ -62,6 +62,18 @@ class Console
     }
 
     /**
+     * Show Webby Current Version
+     *
+     * @return string
+     */
+    protected static function version()
+    {
+        static::$cliversion = defined('WEBBY_VERSION') ? WEBBY_VERSION : self::WEBBY_CLI_VERSION;
+
+        return ConsoleColor::cyan("Webby PHP Framework") . " " . ConsoleColor::green(static::$cliversion) . "\n";
+    }
+
+    /**
      * Display when command
      * not found
      *
@@ -140,16 +152,16 @@ class Console
                 \Base\Console\Commands\Help::runHelp();
             break;
             case '--version':
-                case '-v':
-                    static::consoleEnv();
-    
-                    if (!empty($arg2)) {
-                        \Base\Console\Commands\Help::whichHelp($arg2);
-                        exit;
-                    }
-    
-                    \Base\Console\Commands\Help::runHelp();
-                break;
+            case '-v':
+                static::consoleEnv();
+
+                if (!empty($arg2)) {
+                    echo static::version();
+                    exit;
+                }
+
+                echo static::version();
+            break;
             case '--env':
                 static::consoleEnv();
 
