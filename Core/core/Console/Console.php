@@ -329,29 +329,6 @@ class Console
         static::runSystemCommand($command);
     }
 
-    protected static function createModule(...$args)
-    {
-        $module = explode(':', $args[0]);
-        $name = '';
-        $type = '';
-        $with = '';
-
-        if (isset($module[0])) {
-            $type = $module[0];
-        }
-
-        if (isset($module[1])) {
-            $name = $module[1];
-        }
-
-        if (isset($args[1])) {
-            $with = $args[1];
-        }
-
-        $command = Console::phpCommand() . 'create/createmodule/' . $name . '/' . $type . '/' . $with;
-        static::runSystemCommand($command);
-    }
-
     protected static function createController(...$args)
     {
         $module = $args[0];
@@ -819,7 +796,7 @@ class Console
         exit;
     }
 
-    protected static function createView(...$args)
+protected static function createView(...$args)
     {
         $view = $args;
         $filename = '';
@@ -1053,14 +1030,84 @@ class Console
         $os = (stripos(PHP_OS, "WIN") === 0) ? "WINDOWS" : "UNIX";
 
         static::consoleEnv();
-        
+
         if ($os === "WINDOWS") {
-            exec("netstat -ano | findstr :{$port}");
+            static::quitWindows($port);
+            exit;
+        }
+
+        if ($os === "UNIX") {
+            static::quitUnix($port);
             exit;
         }
 
         exec("fuser -n tcp -k {$port}");
 
+    }
+
+    /**
+     * Quit Windows OS
+     *
+     * @param int $port
+     * @return void
+     */
+    private static function quitWindows($port = self::DEFAULT_PORT)
+    {
+        // Find the Process ID
+        $findPID = "netstat -ano | findstr :{$port}";
+        $output = [];
+        exec($findPID, $output);
+
+        $PID = 0;
+        $pidInfo = [];
+
+        if (count($output) > 0) {
+            // Extract PID from the output
+            $pidInfo = explode(" ", trim($output[0]));
+            $PID = intval(array_pop($pidInfo));
+        }
+
+        if ($PID > 0) {
+            exec("taskkill /F /PID {$PID}", $ouput);
+            $output =   " \n";
+            $output .=  ConsoleColor::white("\tPort {$port} stopped sucessfully", 'light', 'green') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        $output =   " \n";
+        $output .=  ConsoleColor::white("\tNo process found using port {$port}", 'light', 'red') . " \n";
+        echo $output . "\n";
+    }
+
+    /**
+     * Quit Unix OS
+     *
+     * @param int $port
+     * @return void
+     */
+    private static function quitUnix($port = self::DEFAULT_PORT)
+    {
+        
+        $PID = 0;
+
+        // Find the Process ID
+        $findPID = "lsof -t -i:{$port}";
+        $PID = exec($findPID, $output);
+
+        $output = '';
+
+        if ($PID) {
+            exec("kill -9 $PID");
+            $output =   " \n";
+            $output .=  ConsoleColor::white("\tPort {$port} stopped sucessfully", 'light', 'green') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        $output =   " \n";
+        $output .=  ConsoleColor::white("\tNo process found using port {$port}", 'light', 'red') . " \n";
+        echo $output . "\n";
     }
 
     /**
