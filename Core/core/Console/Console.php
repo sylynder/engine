@@ -796,7 +796,7 @@ class Console
         exit;
     }
 
-protected static function createView(...$args)
+    protected static function createView(...$args)
     {
         $view = $args;
         $filename = '';
@@ -825,6 +825,7 @@ protected static function createView(...$args)
             $viewType = $args[2];
         }
 
+        $filename = str_replace('-', '__', $filename);
         $filename = str_replace('/', '-', $filename);
         $module = empty($module) ? 'empty' : $module;
         $command = Console::phpCommand() . 'create/createview/' . $module . '/' . $filename . '/' . $viewType;
