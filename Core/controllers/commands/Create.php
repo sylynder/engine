@@ -249,12 +249,12 @@ class Create extends ConsoleController
         if (!empty($this->namespace)) {
             $contents .= "namespace " . $this->namespace . "; \n\n";
         }
-
+        
         $fileContent = $this->fileContent($fileType, $className, $stubType);
         $contents .= $fileContent;
         
         $exists = file_exists($filePath);
-
+        
         if ($exists) {
             $output =   " \n";
             $output .=  ConsoleColor::white($className . " exists already", 'light', 'red') . " \n";
@@ -816,7 +816,7 @@ class Create extends ConsoleController
         $this->successOutput(ucfirst($moduleName) . " Module created successfully");
         exit;
     }
-
+    
     /**
      * Create Controller
      *
@@ -1494,6 +1494,7 @@ class Create extends ConsoleController
         $moduleType = '';
         $created = '';
         $viewFile = str_replace('-', '/', $viewFile);
+        $viewFile = str_replace('__', '-', $viewFile);
 
         $pathinfo = (object) pathinfo($viewFile);
 
