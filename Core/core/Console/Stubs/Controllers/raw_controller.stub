@@ -1,0 +1,17 @@
+use Base\Controllers\WebController;
+
+class {{CONTROLLER}} extends WebController
+{
+
+    public function __construct()
+    {
+        parent::__construct();
+    }
+
+    public function index()
+    {
+        // Sample Code Here ...
+    }
+
+}
+/* End of {{CONTROLLER}} file */

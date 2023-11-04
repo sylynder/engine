@@ -55,6 +55,14 @@ class Create extends ConsoleController
      */
     private $controller = 'Controllers';
 
+
+    /**
+     * Commands variable
+     *
+     * @var string
+     */
+    private $command = 'Commands';
+
     /**
      * Views variable
      *
@@ -296,6 +304,12 @@ class Create extends ConsoleController
             case 'console_controller':
                 return str_replace('{{CONTROLLER}}', $className, $fileContent);
             break;
+            case 'raw_command':
+            case 'base_command':
+            case 'package_command':
+            case 'console_command':
+                return str_replace('{{COMMAND}}', $className, $fileContent);
+            break;
             case 'easy_model':
             case 'base_model':
             case 'orm_model':
@@ -336,6 +350,7 @@ class Create extends ConsoleController
             case 'web_middleware':
             case 'api_middleware':
             case 'console_middleware':
+            case 'command_middleware':
                 return str_replace('{{MIDDLEWARE}}', $className, $fileContent);
             break;
             case 'fake_enum':
@@ -406,6 +421,10 @@ class Create extends ConsoleController
             static::createConfigDirectory($moduleDirectory);
         }
 
+        if ($with == '--command') {
+            static::createCommandsDirectory($moduleDirectory);
+        }
+
         if ($with === '--m') {
             static::createModelsDirectory($moduleDirectory);
         }
@@ -473,8 +492,10 @@ class Create extends ConsoleController
         }
 
         if ($with === '--all') {
+            static::createConfigDirectory($moduleDirectory);
             static::createModelsDirectory($moduleDirectory);
             static::createControllersDirectory($moduleDirectory);
+            static::createCommandsDirectory($moduleDirectory);
             static::createServicesDirectory($moduleDirectory);
             static::createActionsDirectory($moduleDirectory);
             static::createLibrariesDirectory($moduleDirectory);
@@ -550,6 +571,29 @@ class Create extends ConsoleController
         ($exists)
             ? $this->failureOutput($moduleName . " Controllers folder exists already ")
             : $this->successOutput($moduleName . " Controllers folder created successfully ");
+    }
+
+    /**
+     * Create Commands Directory
+     *
+     * @param string $directoryPath
+     * @return void
+     */
+    private function createCommandsDirectory($directoryPath)
+    {
+        $commands = $directoryPath . DS . $this->command;
+
+        $exists = file_exists($commands);
+
+        if (!is_dir($commands)) {
+            mkdir($commands, 0755, true) or die("Unable to create a command directory");
+        }
+
+        $moduleName = str_last_word($directoryPath, '/');
+
+        ($exists)
+            ? $this->failureOutput($moduleName . " Commands folder exists already ")
+            : $this->successOutput($moduleName . " Commands folder created successfully ");
     }
 
     /**
@@ -816,6 +860,88 @@ class Create extends ConsoleController
         $this->successOutput(ucfirst($moduleName) . " Module created successfully");
         exit;
     }
+
+    /**
+     * Create Command
+     *
+     * @param string $location
+     * @param string $commandName
+     * @param string $defaultCommand
+     * @return void
+     */
+    public function createCommand($location = '', $commandName = '', $defaultCommand = 'raw')
+    {
+        $module = explode(':', $location);
+        $moduleName = '';
+        $moduleType = '';
+        $created = '';
+
+        if (isset($module[0])) {
+            $moduleType = $module[0];
+        }
+
+        if (isset($module[1])) {
+            $moduleName = $module[1];
+        }
+
+        $moduleType = str_replace('-', '', $moduleType);
+        $moduleType = ucfirst($moduleType);
+        
+        $moduleDirectory = $this->createModuleDirectory($moduleName, $moduleType);
+
+        $exists = file_exists($moduleDirectory);
+        $commandDirectory = $moduleDirectory .DS. $this->command;
+
+        if ($exists && $moduleName != 'commands') {
+            // $this->createSubDirectory($moduleDirectory, '--c');
+            $this->createSubDirectory($moduleDirectory, '--command');
+        } else {
+            $commandDirectory = $moduleDirectory .DS;
+        }
+
+        $commandName = ucwords($commandName);
+
+        if (contains('Command', $commandName) || contains('command', $commandName)) {
+            $commandName = ucfirst(substr($commandName, 0, -7));
+        }
+
+        $commandName = $commandName . 'Command';
+        
+        if (file_exists($commandDirectory .DS. $commandName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($commandName). " Command exists already in the " . ucfirst($moduleName) . " module");
+            return;
+        }
+
+        $moduleType = strtolower($moduleType);
+        $defaultCommandStub = str_replace('-', '', $defaultCommand);
+
+        if ($moduleType === 'api') {
+            $defaultCommandStub = 'raw';
+        }
+
+        if ($moduleType === 'web') {
+            $defaultCommandStub = 'raw';
+        }
+
+        if ($moduleType === 'package') {
+            $defaultCommandStub = $defaultCommand;
+        }
+
+        if ($moduleType === 'console') {
+            $defaultCommandStub = $defaultCommand;
+        }
+
+        if ($commandDirectory && is_dir($commandDirectory)) {
+            $filePath = $commandDirectory . DS . $commandName;
+            $created = $this->createFile($filePath, strtolower($defaultCommandStub.'_') .'command', $this->command); 
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($commandName) . " Command created successfully ");
+            return;
+        }
+    }
+
     
     /**
      * Create Controller

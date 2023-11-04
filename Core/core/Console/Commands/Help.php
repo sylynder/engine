@@ -53,12 +53,13 @@ class Help extends Console
         $output .=  ConsoleColor::light_purple("    git:init") .  ConsoleColor::cyan("            Initialize your project to use git")  . " \n";
         $output .=  ConsoleColor::light_purple("    update:engine") .  ConsoleColor::cyan("       Update sylynder engine")  . " \n";
         $output .=  ConsoleColor::light_purple("    clear:cache") .  ConsoleColor::cyan("         Clear specific cached files")  . " \n";
-
+        
         $output .=  " \n";
         $output .=  ConsoleColor::yellow(" Generator Commands:") . " \n";
         $output .=  ConsoleColor::light_purple("    key:generate") .  ConsoleColor::cyan("        Generates an encryption key in the .env file")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:module") .  ConsoleColor::cyan("       Create a module by specifying which sub-directories to use e.g --mvc, --c, --m")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:package") .  ConsoleColor::cyan("      Create a package by specifying which sub-directories to use e.g --mvc, --c, --m, --s")  . " \n";
+        $output .=  ConsoleColor::light_purple("    create:command") .  ConsoleColor::cyan("      Create command by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:controller") .  ConsoleColor::cyan("   Create a controller by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:model") .  ConsoleColor::cyan("        Create a model by specifying which module it belongs with")  . " \n";
         $output .=  ConsoleColor::light_purple("    create:view") .  ConsoleColor::cyan("         Create a view by specifying which path and file name to give or a module it belongs with.")  . " \n";
@@ -358,13 +359,26 @@ class Help extends Console
         echo <<<USECOMMAND
             {$welcome}
             {$description}
-                Enables you to access console controllers to perform cli tasks.
+                Enables you to access console commands to perform cli tasks.
 
             {$usage}
-                php webby use:command
-
+                php webby use:command <command-class-name/method-name>
+                php webby use:command <command-class-name/method-name/parameters>
+                
+                * For commands found in the Console/Commands directory *
+                php webby use:command <module-name/commad-class-name> books/gistcommand
             {$examples}
-                php webby use:command
+                php webby use:command command/index
+
+                * For commands assigned a name in console.php route file *
+                php webby use:command gist:command
+                
+                * For commands found in the Console/Commands directory *
+                php webby use:command books/gistcommand
+
+                * For commands assigned that can be accessed as routes name in console.php route file *
+                php webby use:command app/index
+                
 
         USECOMMAND;
     }
@@ -431,6 +445,7 @@ class Help extends Console
             {$usage}
                 php webby create:module <name>
                 php webby create:module <module-type:module-name> --config
+                php webby create:module <module-type:module-name> --command
                 php webby create:module <module-type:module-name> --m
                 php webby create:module <module-type:module-name> --v
                 php webby create:module <module-type:module-name> --c
@@ -466,6 +481,7 @@ class Help extends Console
             {$usage}
                 php webby create:package <name>
                 php webby create:package <name> --config
+                php webby create:package <name> --command
                 php webby create:package <name> --m 
                 php webby create:package <name> --v 
                 php webby create:package <name> --c 
@@ -477,6 +493,36 @@ class Help extends Console
                 php webby create:package notifications --config
 
         CREATEPACKAGE;
+    }
+
+    private static function create_command()
+    {
+        $welcome     = static::welcome();
+        $usage       = static::hereColor('Usage:', 'yellow');
+        $description = static::hereColor('Description:', 'yellow');
+        $examples    = static::hereColor('Examples:', 'yellow');
+
+        echo <<<CREATECOMMAND
+            {$welcome}
+            {$description}
+                Create command by specifying which module it belongs with
+
+            {$usage}
+                php webby create:command <module-type:module-name> <command-name> <options>
+                php webby create:command <command-name> <options>
+
+
+            {$examples}
+                * Add command to App/Console/Commands directory *
+                php webby create:command --name=cars
+                php webby create:command --name=cars --console
+                
+                * Add module commands *
+                php webby create:command console:books --name=books
+                php webby create:command console:console --name=schedule
+                php webby create:command console:books --name=gist --console
+
+        CREATECOMMAND;
     }
 
     private static function create_controller()
@@ -864,6 +910,9 @@ class Help extends Console
             break;
             case 'create:package':
                 Help::create_package();
+            break;
+            case 'create:command':
+                Help::create_command();
             break;
             case 'create:controller':
                 Help::create_controller();

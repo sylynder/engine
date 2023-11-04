@@ -232,6 +232,10 @@ class Console
                 static::consoleEnv();
                 static::createController($arg2, $arg3, $arg4);
             break;
+            case 'create:command':
+                static::consoleEnv();
+                static::createCommand($arg2, $arg3, $arg4);
+            break;
             case 'create:model':
                 static::consoleEnv();
                 static::createModel($arg2, $arg3, $arg4, $arg5);
@@ -326,6 +330,72 @@ class Console
         }
 
         $command = Console::phpCommand() . 'create/createpackage/' . $name . '/' . $type . '/' . $with;
+        static::runSystemCommand($command);
+    }
+
+    protected static function createModule(...$args)
+    {
+        $module = explode(':', $args[0]);
+        $name = '';
+        $type = '';
+        $with = '';
+
+        if (isset($module[0])) {
+            $type = $module[0];
+        }
+
+        if (isset($module[1])) {
+            $name = $module[1];
+        }
+
+        if (isset($args[1])) {
+            $with = $args[1];
+        }
+
+        $command = Console::phpCommand() . 'create/createmodule/' . $name . '/' . $type . '/' . $with;
+        static::runSystemCommand($command);
+    }
+
+    protected static function createCommand(...$args)
+    {
+        $module = $args[0];
+        $commandName = '';
+
+        $nonModuleCommand = str_contains($args[0], '--name');
+
+        if ($nonModuleCommand) {
+            $args[2] = $args[1];
+            $args[1] = $args[0];
+        }
+
+        $command = str_replace('=', ':', $args[1]);
+        $command = explode(':', $command);
+
+        $addCommand = '';
+
+        if ($command[0] !== '--name') {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:command", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
+        if (isset($command[1])) {
+            $commandName = $command[1];
+        }
+
+        if (isset($args[2])) {
+            $addCommand = $args[2];
+        }
+
+        if ($nonModuleCommand) {
+            $command = Console::phpCommand() . 'create/createnonmodulecommand/' . $commandName . '/' . $addCommand;
+            static::runSystemCommand($command);
+            return;
+        }
+        
+        $module = str_replace('=',':', $module);
+        $command = Console::phpCommand() . 'create/createcommand/' . $module . '/' . $commandName . '/' . $addCommand;
         static::runSystemCommand($command);
     }
 

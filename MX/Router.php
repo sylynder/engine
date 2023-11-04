@@ -69,7 +69,7 @@ class MX_Router extends \CI_Router
 			$this->_set_default_controller();
 			return;
 		}
-		
+
 		$this->set_class($segments[0]);
 		
 		if (isset($segments[1]))
@@ -122,21 +122,33 @@ class MX_Router extends \CI_Router
 
 		/* get the segments array elements */
 		list($module, $directory, $controller) = array_pad($segments, 3, null);
-		
+
 		if ($module === $commands_directory) {
 			list($module, $controller) = array_pad($segments, 2, null);
+		}
+
+		if (str_contains((string) $directory, 'command')) {
+			$directory = str_replace('command','Command', (string) $directory);
+			$controller = str_replace('command','Command', (string) $controller);
 		}
 
 		/* check modules */
 		foreach (Modules::$locations as $location => $offset)
 		{
+
+			$hasCommand = str_contains((string) $directory, 'Command');
+
 			if ($module === $commands_directory) {
 				$source = $location . ucfirst($module) . '/';
 				$controller_location = ucfirst($module) . '/';
+			} else if ($hasCommand) {
+				$source = $location . ucfirst($module) . '/Commands/';
+				$controller_location = ucfirst($module) . '/Commands/';
+				$controller = $controller ?? '';
 			} else {
 				$source = $location . ucfirst($module) . '/Controllers/';
 				$controller_location = ucfirst($module) . '/Controllers/';
-				$controller = '';
+				$controller = $controller ?? '';
 			}
 
 			/* module exists? */
@@ -145,7 +157,7 @@ class MX_Router extends \CI_Router
 				$this->module = ucfirst($module);
 				$this->directory = $offset . $controller_location;
 				$this->controller = $controller;
-				
+
 				/* module sub-controller exists? */
 				if($directory)
 				{
@@ -218,7 +230,7 @@ class MX_Router extends \CI_Router
 
 			/* application sub-sub-directory controller exists? */
 			if($controller)
-			{ 
+			{
 				if(is_file(APPPATH.'controllers/'.$module.'/'.$directory.'/'.ucfirst($controller).$ext))
 				{
 					$this->directory = $module.'/'.$directory.'/';
@@ -261,7 +273,7 @@ class MX_Router extends \CI_Router
 		{
 			// Are module/directory/controller/method segments being specified?
 			$sgs = sscanf($_route, '%[^/]/%[^/]/%[^/]/%s', $module, $directory, $class, $method);
-			
+
 			// set the module/controller directory location if found
 			if ($this->locate([$module, $directory, $class]))
 			{
@@ -287,6 +299,10 @@ class MX_Router extends \CI_Router
 		
 		$string_position = !empty($suffix) ? strpos($class, $suffix) : false;
 		
+		$class = str_contains($class,'command')
+			? ucfirst(str_replace('command', 'Command', $class))
+			: $class;
+
 		if ($string_position === false)
 		{
 			$class .= $suffix;
