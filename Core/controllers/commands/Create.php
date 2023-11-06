@@ -942,6 +942,47 @@ class Create extends ConsoleController
         }
     }
 
+    /**
+     * Create A Non Module Command
+     *
+     * @param string $controllerName
+     * @param string $addCommand
+     * @param string $location
+     * @return void
+     */
+    public function createNonModuleCommand($commandName = '', $commandType = '', $location = 'Console/Commands')
+    {
+        $created = '';
+
+        $commandName = ucwords($commandName) . 'Command';
+        $commandType = str_replace('-', '', (string)$commandType);
+        $fileType = ($commandType) ? $commandType.'_command' : 'raw_command';
+        
+        // if ($addController == '--addcontroller') {
+        //     $commandName = Inflector::singularize($commandName) . 'Controller';
+        // }
+        
+        $this->commands = 'Console/Commands';
+
+        $commandDirectory = $this->createAppRootDirectory($this->commands);
+
+        $location = 'App/' . $this->commands;
+
+        if (file_exists($commandDirectory . DS . $commandName . $this->fileExtention)) {
+            $this->failureOutput(ucfirst($commandName). " Command exists already in the " . $location . " directory");
+            return;
+        }
+
+        if ($commandDirectory && is_dir($commandDirectory)) {
+            $filePath = $commandDirectory . DS . $commandName;
+            $created = $this->createFile($filePath, $fileType, $this->command); 
+        }
+
+        if ($created) {
+            $this->successOutput(ucfirst($commandName) . " Command created successfully ");
+            return;
+        }
+    }
     
     /**
      * Create Controller
@@ -1000,14 +1041,6 @@ class Create extends ConsoleController
         }
     }
 
-    /**
-     * Create A Non Module Controller
-     *
-     * @param string $controllerName
-     * @param string $addController
-     * @param string $location
-     * @return void
-     */
     public function createNonModuleController($controllerName = '', $addController = '', $location = 'App/Controllers')
     {
         $created = '';
@@ -1080,7 +1113,6 @@ class Create extends ConsoleController
             return;
         }
     }
-
     /**
      * Create Model
      *
