@@ -403,8 +403,10 @@ class Console
     {
         $module = $args[0];
         $controllerName = '';
+        $location = "Controllers";
+        $lastArg = $args[2];
 
-        $nonModuleController = str_contains($args[0], '--name');
+        $nonModuleController = str_contains($module, '--name');
 
         if ($nonModuleController) {
             $args[2] = $args[1];
@@ -431,8 +433,13 @@ class Console
             $addController = $args[2];
         }
 
+        if ($args[2] == '--dir') {
+            $location = $lastArg;
+        }
+
         if ($nonModuleController) {
-            $command = Console::phpCommand() . 'create/createnonmodulecontroller/' . $controllerName . '/' . $addController;
+            $location = str_replace('/','_', $location);
+            $command = Console::phpCommand() . 'create/createnonmodulecontroller/' . $controllerName . '/' . $addController . '/' . $location;
             static::runSystemCommand($command);
             return;
         }
