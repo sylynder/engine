@@ -941,7 +941,7 @@ class Create extends ConsoleController
             return;
         }
     }
-
+    
     /**
      * Create A Non Module Command
      *
@@ -1041,7 +1041,15 @@ class Create extends ConsoleController
         }
     }
 
-    public function createNonModuleController($controllerName = '', $addController = '', $location = 'App/Controllers')
+    /**
+     * Create A Non Module Controller
+     *
+     * @param string $controllerName
+     * @param string $addController
+     * @param string $location
+     * @return void
+     */
+    public function createNonModuleController($controllerName = '', $addController = '', $location = 'Controllers')
     {
         $created = '';
 
@@ -1051,9 +1059,19 @@ class Create extends ConsoleController
         if ($addController == '--addcontroller') {
             $controllerName = Inflector::singularize($controllerName) . 'Controller';
         }
-
+        
         $this->controllers = 'Controllers';
+
+        if ($addController == '--dir' && $location != 'Controllers') {
+            $location = str_replace('_', ' ', $location);
+            $location = ucwords($location);
+            $location = str_replace(' ', '/', $location);
+            $this->controllers = 'Controllers' .DS. $location;
+        }
+
         $controllerDirectory = $this->createAppRootDirectory($this->controllers);
+
+        $location = 'App/' . $this->controllers;
 
         if (file_exists($controllerDirectory . DS . $controllerName . $this->fileExtention)) {
             $this->failureOutput(ucfirst($controllerName). " Controller exists already in the " . $location . " directory");
@@ -1113,6 +1131,7 @@ class Create extends ConsoleController
             return;
         }
     }
+
     /**
      * Create Model
      *
