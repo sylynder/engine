@@ -941,7 +941,7 @@ class Create extends ConsoleController
             return;
         }
     }
-    
+
     /**
      * Create A Non Module Command
      *
@@ -1098,7 +1098,7 @@ class Create extends ConsoleController
      * @param string $location
      * @return void
      */
-    public function createNonModuleModel($modelName = '', $modelType = '--easy', $removeModel = '', $location = 'App/Models') 
+    public function createNonModuleModel($modelName = '', $modelType = '--easy', $removeModel = '', $location = 'Models') 
     {
 
         $created = '';
@@ -1107,6 +1107,17 @@ class Create extends ConsoleController
         
         $this->model = 'Models';
         $this->namespace = $namespace;
+
+        if ($removeModel == '--dir' && $location != 'Models') {
+            $location = str_replace('_', ' ', $location);
+            $location = ucwords($location);
+            $location = str_replace(' ', '/', $location);
+
+            $this->model = 'Models' .DS. $location;
+            $this->namespace = 'App\\' .  str_replace('/', '\\', $this->model);
+            $location = $this->model;
+        }
+
         $modelDirectory = $this->createAppRootDirectory($this->model);
 
         if ($removeModel == '--remove-model') {
@@ -1115,10 +1126,14 @@ class Create extends ConsoleController
             $modelName = Inflector::singularize($modelName) . 'Model';
         }
 
+        $location = 'App/' . ucwords($location);
+
         if (file_exists($modelDirectory . DS . $modelName . $this->fileExtention)) {
             $this->failureOutput(ucfirst($modelName) . " exists already in the " . $location . " directory");
             return;
         }
+
+        $this->model = 'Models';
 
         if ($modelDirectory && is_dir($modelDirectory)) {
             $filePath = $modelDirectory . DS . $modelName;
