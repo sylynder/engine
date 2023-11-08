@@ -453,8 +453,10 @@ class Console
     {
         $module = $args[0];
         $modelName = '';
+        $location = "Models";
+        $lastArg = $args[3];
 
-        $nonModuleModel = str_contains($args[0], '--name');
+        $nonModuleModel = str_contains($module, '--name');
 
         if ($nonModuleModel) {
             $args[3] = $args[2];
@@ -486,6 +488,10 @@ class Console
         if (isset($args[3])) {
             $removeModel = $args[3];
         }
+
+        if ($args[3] == '--dir') {
+            $location = $lastArg;
+        }
         
         if ($modelType == '--remove-model') {
             $output =   " \n";
@@ -494,8 +500,16 @@ class Console
             exit;
         }
 
+        if ($modelType == '--dir') {
+            $output =   " \n";
+            $output .=  ConsoleColor::white(" Please check docs for correct syntax to create:model", 'light', 'red') . " \n";
+            echo $output . "\n";
+            exit;
+        }
+
         if ($nonModuleModel) {
-            $command = Console::phpCommand() . 'create/createnonmodulemodel/' . $modelName . '/' . $modelType. '/' . $removeModel;
+            $location = str_replace('/','_', $location);
+            $command = Console::phpCommand() . 'create/createnonmodulemodel/' . $modelName . '/' . $modelType. '/' . $removeModel. '/' . $location;
             static::runSystemCommand($command);
             return;
         }
