@@ -576,6 +576,7 @@ class Help extends Console
                 * Add models to App/Models directory *
                 php webby create:model --name=books
                 php webby create:model --name=books --easy --remove-model
+                php webby create:model --name=books --easy --dir <directory-name>
 
                 * Add module models *
                 php webby create:model web:app --name=books
