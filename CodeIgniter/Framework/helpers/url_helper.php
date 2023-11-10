@@ -57,8 +57,8 @@ if ( ! function_exists('site_url'))
 	 * Create a local URL based on your basepath. Segments can be passed via the
 	 * first parameter either as a string or an array.
 	 *
-	 * @param	string	$uri
-	 * @param	string	$protocol
+	 * @param	string|array $uri
+	 * @param	string $protocol
 	 * @return	string
 	 */
 	function site_url($uri = '', $protocol = null)
