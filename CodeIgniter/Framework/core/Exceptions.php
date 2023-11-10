@@ -121,7 +121,7 @@ class CI_Exceptions {
 		if (is_cli())
 		{
 			$heading = 'Not Found';
-			$message = 'The command or controller/method pair you requested was not found.';
+			$message = 'The command/method or controller/method pair you requested was not found.';
 		}
 		else
 		{
