@@ -108,8 +108,10 @@ class Base_Exceptions extends \CI_Exceptions
 			show_404();
 		}
 
-		$directory = (get_instance()) ? get_instance()->router->directory : '';
-
+		$directory = (get_instance()->router->directory != null) 
+			? get_instance()->router->directory 
+			: '';
+		
 		$location = str_replace('../', '', (string) $directory);
 		
 		$filepath = function_exists('session') ? session('__view_path') : $exception->getFile();
@@ -176,8 +178,10 @@ class Base_Exceptions extends \CI_Exceptions
 			$templates_path = VIEWPATH . 'errors' . DIRECTORY_SEPARATOR;
 		}
 		
-		$directory = (get_instance()) ? get_instance()->router->directory : '';
-
+		$directory = (get_instance()->router->directory != null) 
+			? get_instance()->router->directory 
+			: '';
+		
 		$location = str_replace('../', '', (string) $directory);
 		
 		$filelocation = $filepath;
