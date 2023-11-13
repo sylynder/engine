@@ -154,7 +154,7 @@ class Route
 	// --------------------------- Utility functions ----------------------------------
 
 	/**
-	 * Get path to display Route:view()
+	 * Get path to display Route::view()
 	 *
 	 * @return string
 	 */
@@ -651,6 +651,20 @@ class Route
 	public static function view($name = '')
 	{
 		static::any($name, static::routeView().$name);
+	}
+
+	/**
+	 * Simple route to get views
+	 * from the Views folder
+	 * 
+	 * This is an alias to Route::view();
+	 * 
+	 * @param  $name  view name to use as route
+	 * @return void
+	 */
+	public static function page($name = '')
+	{
+		static::view($name);
 	}
 
 	/**
