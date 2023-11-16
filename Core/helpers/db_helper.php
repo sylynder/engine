@@ -26,34 +26,24 @@ if ( ! function_exists('use_table'))
 	 * @param string $table
 	 * @return object
 	 */
-	function use_table($table = '', $model_type = 'EasyModel')
-	{
-		if ($model_type === 'EasyModel') {
-			$model = new \Base\Models\EasyModel;
-		}
-
-		if ($model_type === 'BaseModel') {
-			$model = new \Base\Models\BaseModel();
-		}
-
-		if ($model_type === 'OrmModel') {
-			$model = new \Base\Models\OrmModel;
-		}
-
-		if ($model_type === 'Model') {
-			$model = new \Base\Models\Model;
-		}
-
+	function use_table($table = '', $with = 'EasyModel')
+    {
 		// This will default to EasyModel unless 
-		// $model_type is changed appropriately
-        if (empty($table)) {
-			return $model;
-		}
+        // Model type $with is changed appropriately
+        $model = match ($with) {
+            'EasyModel' => new \Base\Models\EasyModel,
+            'BaseModel' => new \Base\Models\BaseModel,
+            'OrmModel'  => new \Base\Models\OrmModel,
+            'Model'     => new \Base\Models\Model,
+            default     => new \Base\Models\EasyModel, // Default to EasyModel
+        };
+        
+        if (!empty($table)) {
+            $model->{'table'} = $table; // bypass dynamic property error
+        }
 
-		$model->{'table'} = $table; // bypass dynamic property error
-
-		return $model;
-	}
+        return $model;
+    }
 }
 
 if ( ! function_exists( 'use_db' ))
