@@ -293,7 +293,7 @@ if ( ! function_exists('url'))
     /**
      * Improved alias of site_url
      *
-     * @param string $uri
+     * @param string|array $uri
      * @param bool $protocol
      * @return string
      */
@@ -303,14 +303,14 @@ if ( ! function_exists('url'))
             return void_url();
         }
 
-        // Detect if the $uri starts with 'https://' or 'http://'
-        if (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0) {
-            return $uri;
+        // Detect if the $uri is string and starts with 'https://' or 'http://'
+        if (is_string ($uri) && (strpos($uri, 'https://') === 0 || strpos($uri, 'http://') === 0)) {
+            return $uri . $param;
         }
         
         // Detect if the $uri starts with 'www.'
-        if (strpos($uri, 'www.') === 0) {
-            return 'https://' . $uri;
+        if (is_string ($uri) && strpos($uri, 'www.') === 0) {
+            return $uri . $param;
         }
 
         if (is_array($uri)) {
