@@ -667,7 +667,7 @@ class CI_Form_validation
 	 *
 	 * This function does all the work.
 	 *
-	 * @deprecated	2.1.1	use true() instead Alias to the run() method
+	 * @deprecated	2.1.1	use true() instead, alias to the run() method
 	 * @param	string	$group
 	 * @return	bool
 	 */
@@ -688,6 +688,50 @@ class CI_Form_validation
 	{
 		return $this->run($group);
 	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Applies filters on fields
+	 * 
+	 * This method lets you apply functions to form fields 
+	 * so that it can be returned back as an array
+	 * e.g ucfirst, trim etc
+	 *
+	 * @param string|array $functions
+	 * @param string|array|null $fields
+	 * @param array $data
+	 * @return array
+	 */
+	public function apply($functions, $fields = null, $data = []) 
+    {
+
+        $data = clean($data) ?: clean($this->CI->load->input->post());
+
+        if (is_null($fields)) {
+            $fields = array_keys($data); // Use all available fields
+        }
+
+        if (!is_array($functions)) {
+            $functions = explode('|', str_replace(',', '|', $functions));
+        }
+
+        if (!is_array($fields)) {
+            $fields = explode('|', str_replace(',', '|', $fields));
+        }
+
+        foreach ($fields as $field) {
+            if (isset($data[$field])) {
+                foreach ($functions as $function) {
+                    if (function_exists($function)) {
+                        $data[$field] = $function($data[$field]);
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
 
 	// --------------------------------------------------------------------
 
