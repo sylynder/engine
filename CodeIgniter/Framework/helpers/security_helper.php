@@ -54,7 +54,7 @@ if ( ! function_exists('xss_clean'))
 	/**
 	 * XSS Filtering
 	 *
-	 * @param	string
+	 * @param	string|array
 	 * @param	bool	whether or not the content is an image file
 	 * @return	string
 	 */
