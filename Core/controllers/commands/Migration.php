@@ -76,12 +76,29 @@ class Migration extends ConsoleController
 
 		$this->onlydev();
 
-		$this->use->database();
+		$this->connectDB();
 		$this->use->dbforge();
 
 		$this->migration = (new Migrate);
 
 		$this->migrationRequirements();
+	}
+
+	/**
+	 * Connect to a database
+	 *
+	 * @return void
+	 */
+	private function connectDB()
+	{
+		try {
+			shut_up();
+				$this->use->database();
+			speak_up();
+		} catch(\Exception $e) {
+			echo $this->error($e->getMessage());
+			exit;
+		}
 	}
 
     /**
@@ -253,7 +270,7 @@ class Migration extends ConsoleController
      * @param string $database
      * @return void
      */
-	public function useDB($database = 'default') 
+	public function useDB($database = 'default')
 	{
 		$this->useDb = $database;
 	}
@@ -354,7 +371,7 @@ class Migration extends ConsoleController
             $this->rollback(INF); // infinity
         }
 
-        echo $this->warning("Migration has been reset to initial state successfully");
+		echo $this->warning("Migration has been reset to initial state successfully");
     }
 
     /**
@@ -363,7 +380,7 @@ class Migration extends ConsoleController
      * @param integer $step
      * @return void
      */
-	public function rollback($step = 0) 
+	public function rollback($step = 0)
 	{
 		$previousMigrations = $this->executedMigrations();
 
@@ -439,7 +456,7 @@ class Migration extends ConsoleController
      *
      * @return void
      */
-	public function latest() 
+	public function latest()
 	{
         $migration = $this->executedMigrations(true, true);
 
@@ -447,14 +464,14 @@ class Migration extends ConsoleController
 
 		$this->output->set_header('Content-type: text/plain');
         
-        if (!$migration) {
-           echo $output = $this->warning('No Current Migration Available');
-           exit; 
-        }
+		if (!$migration) {
+			echo $output = $this->warning('No Current Migration Available');
+			exit; 
+		 }
 
 		$list = $migration->run_at.' '.$migration->migration;
 
-        if ($list) {
+		if ($list) {
             $output = $this->info("\nLatest Migration", 2);
             $output .= $this->warning($list, 2);
         } else {
