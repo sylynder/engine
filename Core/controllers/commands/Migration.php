@@ -170,6 +170,22 @@ class Migration extends ConsoleController
 		}
 	}
 
+	/**
+     * Check Executed Migration
+     *
+	 * This checks if a single migration file has
+	 * been run earlier
+	 * 
+     * @param string $file
+     * @return mixed
+     */
+	private function executedMigration($file)
+	{
+		return $this->db
+			->where('migration', $file)
+			->get(self::TABLE)->first_row();
+	}
+
     /**
      * Executed Migrations
      *
