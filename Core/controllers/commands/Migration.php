@@ -190,9 +190,11 @@ class Migration extends ConsoleController
      * Executed Migrations
      *
      * @param boolean $latest
+	 * @param boolean $single
      * @return mixed
      */
-	private function executedMigrations($latest = true, $single = false) {
+	private function executedMigrations($latest = true, $single = false)
+	{
 		
         if ($single) {
             return $this->db
@@ -359,6 +361,95 @@ class Migration extends ConsoleController
 			exit("Error: ".$e->getMessage().PHP_EOL);
 		}
 	}
+
+	/**
+	 * Specify file to use for migrations
+	 * and which method to run
+	 * 
+	 * @param string $file
+	 * @param string $key
+	 * @return void
+	 */
+	public function usefile($file, $key)
+	{
+
+		$migration = $this->executedMigration($file);
+		
+		if ($migration && $key === '--down') {
+			
+			try {
+
+				$startTime = microtime(true);
+	
+				$file = $migration->migration;
+				$path = self::PATH . $file;
+				$exists = file_exists($path);
+	
+				if ($exists) {
+
+					echo $this->info("\tDropping migration $file \n");
+
+					$this->prepareDownMigration($file);
+				
+					$this->db->delete(self::TABLE, ['migration' => $migration->migration]);
+					
+					echo $this->success("\tDropped $file successfully".PHP_EOL);
+				}
+	
+				$elapsedTime = round(microtime(true) - $startTime, 3) * 1000;
+				
+				echo $this->warning("\tTook $elapsedTime ms to drop migration");
+				exit;
+	
+			} catch (\Exception $e) {
+				exit("Error: ".$e->getMessage().PHP_EOL);
+			}
+
+		}
+		
+		if ($migration) {
+			
+			echo $this->info("\n\tMigration exists already, dropping: $file \n");
+
+			$this->prepareDownMigration($file);
+		
+			$this->db->delete(self::TABLE, ['migration' => $migration->migration]);
+			
+			echo $this->warning("\tRun --up --usefile={$file} once more to complete migration".PHP_EOL);
+		}
+
+		if (!$migration) {
+			try {
+
+				$startTime = microtime(true);
+
+				$batch = $this->executedMigrations(true, true);
+
+				if (!empty($batch)) {
+					$batch = $batch->batch + 1;
+				} else {
+					$batch = 1;
+				}
+	
+				echo $this->info("\tProcessing $file \n");
+
+				$this->prepareUpMigration($file);
+
+				$this->db->insert(self::TABLE, ['migration' => $file, 'batch' => $batch]);
+
+				echo $this->success("\t$file done".PHP_EOL);
+	
+				$elapsedTime = round(microtime(true) - $startTime, 3) * 1000;
+
+				echo $this->warning("\tTook $elapsedTime ms to run migrations", 1);
+	
+			} catch (\Exception $e) {
+				exit("Error: ".$e->getMessage().PHP_EOL);
+			}
+		}
+
+	}
+
 
 	/**
      * Truncate Migrations Table
