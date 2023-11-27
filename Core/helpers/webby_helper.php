@@ -1120,22 +1120,6 @@ if ( ! function_exists('remove_from_array'))
     }
 }
 
-if ( ! function_exists('remove_empty_elements')) 
-{
-    /**
-     * Remove keys and values 
-     * that are empty
-     *
-     * @param array $array
-     * @return array
-     */
-    function remove_empty_elements($array)
-    {
-            $array = array_map('array_filter', $array);
-            return $array = array_filter($array);
-    }
-}
-
 if ( ! function_exists('remove_with_value')) 
 {
     /**
@@ -1202,7 +1186,7 @@ if ( ! function_exists('arrayfy'))
             $json = json_encode($object);
             return json_decode($json, true);
         }
-
+    
         if (is_array($object)) {
             return $object;
         }
