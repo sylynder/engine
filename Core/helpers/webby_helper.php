@@ -1723,7 +1723,7 @@ if ( ! function_exists('honeypot'))
             $data['honeytime'] = base64_encode(time());
             session('honeytime', $data['honeytime']);
             $data['timename'] = env('honeypot.timename');
-            $data['honeyfield'] =str_replace('{hidden}', $data['hidden'], $data['honeyfield']);
+            $data['honeyfield'] = str_replace('{hidden}', $data['hidden'], $data['honeyfield']);
             $data['honeyfield'] = str_replace('{timename}', $data['timename'], $data['honeyfield']);
             $data['honeyfield'] = str_replace('{honeytime}', $data['honeytime'], $data['honeyfield']);
         }
