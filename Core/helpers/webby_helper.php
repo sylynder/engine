@@ -1813,8 +1813,8 @@ if ( ! function_exists('clean'))
     /**
      *  Clean string from XSS
      *
-     *  @param     string    $str
-     *  @param     string    $is_image
+     *  @param     string|array    $str
+     *  @param     bool    $is_image
      *  @return    string|array
      */
     function clean($str, $is_image = false)
