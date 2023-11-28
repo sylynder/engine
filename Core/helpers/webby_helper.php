@@ -1168,23 +1168,35 @@ if ( ! function_exists('arrayfy'))
 {
     
     /**
-     * Encode an array-object and retrieve
-     * as an array
+     * Convert an array-object and retrieve
+     * as an array or generator
      *
-     * @param mixed 
-     * @return array|bool
+     * @param object|array $object
+     * @param boolean $asGenerator
+     * @param int $threshold
+     * @return \Generator|array
      */
-    function arrayfy($object)
+    function arrayfy($object, $asGenerator = false, $threshold = 1000)
     {
         
-        if (is_object($object)) {
-            $json = json_encode($object);
-            return json_decode($json, true);
+        if ($asGenerator) {
+            $object = to_generator($object, $threshold);
         }
 
-        if ($object) {
-            $json = json_encode($object);
-            return json_decode($json, true);
+        if ($object instanceof \Generator) {
+            return $object;
+        }
+
+        if (is_object($object)) {
+            $array = [];
+            foreach ($object as $key => $value) {
+                $array[$key] = arrayfy($value);
+            }
+            return $array;
+        }
+
+        if (!is_array($object)) {
+            return json_decode(json_encode($object), true);
         }
     
         if (is_array($object)) {
@@ -1192,8 +1204,7 @@ if ( ! function_exists('arrayfy'))
         }
 
         throw new \Exception("Parameter must be an object or a supporting type", 1);
-
-        return false;
+        
     }
 }
 
