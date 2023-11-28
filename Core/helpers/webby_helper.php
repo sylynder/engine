@@ -1288,6 +1288,23 @@ if ( ! function_exists('compare_json'))
     }
 }
 
+if ( ! function_exists('to_array')) 
+{
+    /**
+     * Alias of arrayfy()
+     *
+     * @param object|array $object
+     * @param bool $asGenerator
+     * @param int $threshold
+     * @return \Generator|array
+     */ 
+    function to_array($object, $asGenerator = false, $threshold = 1000)
+    {
+        return arrayfy($object, $asGenerator, $threshold);
+    }
+
+}
+
 if ( ! function_exists('to_generator')) 
 {
     /**
