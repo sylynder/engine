@@ -1210,23 +1210,42 @@ if ( ! function_exists('arrayfy'))
 
 if ( ! function_exists('objectify')) 
 {
+
     /**
-     * Encode an array and retrieve
+     * Convert an array and retrieve
      * as an object
      *
      * @param array $array
-     * @return object|bool
+     * @param bool $natural
+     * @param string|object $class
+     * @return object|mixed
      */
-    function objectify(array $array)
+    function objectify(array $array, $natural = false, $class = 'stdClass')
     {
+
+        if ($natural) {
+
+            $object = new $class;
+
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    // Recursively convert nested arrays
+                    $object->$key = objectify($value, true, $class);
+                } else {
+                    $object->$key = $value;
+                }
+            }
+
+            return $object;
+        }
+
         if (is_array($array)) {
             $array = json_encode($array, JSON_THROW_ON_ERROR);
             return json_decode($array, null, 512, JSON_THROW_ON_ERROR);
         }
 
         throw new \Exception("Parameter must be array", 1);
-        
-        return false;
+
     }
 }
 
