@@ -1288,6 +1288,39 @@ if ( ! function_exists('compare_json'))
     }
 }
 
+if ( ! function_exists('to_generator')) 
+{
+    /**
+     * Convert an array or object
+     * to a generator
+     *
+     * @param mixed $data
+     * @param integer $threshold
+     * @return \Generator|array|object
+     */
+    function to_generator($data, $threshold = 1000)
+    {
+        $count = 0;
+    
+        if (is_array($data)) {
+            $count = count($data);
+        } 
+        
+        if (is_object($data)) {
+            $count = count(get_object_vars($data));
+        }
+    
+        if ($count > $threshold) {
+            foreach ($data as $key => $value) {
+                yield $key => $value;
+            }
+        } else {
+            return $data;
+        }
+
+    }
+}
+
 /* ------------------------------- Date | Time | Format Functions ---------------------------------*/
 
 
