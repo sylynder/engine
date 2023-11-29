@@ -77,6 +77,13 @@ class Migration extends ConsoleController
 	 */
 	private $schemaExportDirectory = 'schema-exports';
 
+	/**
+	 * Database Dumps
+	 *
+	 * @var string
+	 */
+	private $databaseDumpDirectory = 'dumps';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -514,6 +521,117 @@ class Migration extends ConsoleController
 			}
 
 			$filename = $name . "-schema.sql";
+		}
+
+		if (!is_dir($filepath)) {
+			mkdir($filepath, 0775);
+		}
+
+		$this->load->helper('file');
+		$saved = write_file($filepath . $filename, $content);
+
+		if ($saved) {
+			echo $this->success("\n\tDatabase Schema ", 0). $this->info("[".$filename."]", 0). $this->success(" Exported successfully\n", 1);
+			exit;
+		}
+
+		if ($saved) {
+			echo $this->error("\n\tDatabase Schema ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Exported\n", 1);
+			exit;
+		}
+		
+	}
+
+	/**
+	 * Dump Migrated Schema
+	 *
+	 * @param string $name
+	 * @return void
+	 */
+	public function dumpDb($name = null)
+	{
+		$tables = $this->db->list_tables();
+
+		if ($name === null) {
+			echo $this->error("\tName cannot be empty please provide a name for file to be dumped", 1);
+			exit;
+		}
+
+		$webbyVersion = WEBBY_VERSION;
+		$appUrl = base_url();
+		$dateGenerated = date('M d, Y') .' at '. date('H:i A');
+		$phpVersion = PHP_VERSION;
+
+		$desc = <<<DESC
+			-- Webby Database Dump
+			-- Version: {$webbyVersion}
+			--
+			-- App Url: {$appUrl}
+			-- Generation Time: {$dateGenerated}
+			-- PHP Version: $phpVersion
+
+			SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+			START TRANSACTION;
+			SET time_zone = "+00:00";
+		DESC;
+
+		$content = $desc;
+		$content .= "\r\n";
+
+		$filepath = ROOTPATH .'database'. DS . $this->databaseDumpDirectory . DS;
+		$filename = '';
+
+		if ($tables) {
+			$i = 0;
+			foreach ($tables as $table) {
+
+				$content .= "\r\n";
+                $content .= 'DROP TABLE IF EXISTS `' . $table . '`;';
+                $content .= "\r\n\n";
+                $content .= $this->db->query('SHOW CREATE TABLE ' . $table)->row_array()['Create Table'] . ';';
+                $content .= "\r\n";
+
+				$fields = $this->db->list_fields($table);
+				$table_data = $this->db->query('SELECT * FROM ' . $table)->result_array();
+				$insert_field = '';
+                $insert_values = '';
+
+				if ($fields && $table_data) {
+					
+					$insert_field .= "\r\n";
+					$insert_field .= 'INSERT INTO `' . $table . '` (';
+					
+                    foreach ($fields as $field) {
+                        $insert_field .= '`' . $field . '`,';
+                    }
+					
+                    $insert_field = substr($insert_field, 0, -1);
+                    $insert_field .= ')';
+					
+                    $insert_values .= ' VALUES ';
+					$insert_values .= "\r\n";
+
+                    foreach ($table_data as $table_row) {
+                        $insert_values .= '(';
+                        foreach ($table_row as $column => $value) {
+                            $insert_values .= "'" . addslashes($value) . "',";
+                        }
+                        $insert_values = substr($insert_values, 0, -1);
+                        $insert_values .= '),';
+						$insert_values .= "\r\n";
+                    }
+
+                    $insert_values = substr($insert_values, 0, -3) . ';';
+					$insert_values .= "\r\n";
+
+				}
+
+				$content .= $insert_field . $insert_values;
+
+				$i++;
+			}
+
+			$filename = $name . "-dump.sql";
 		}
 
 		if (!is_dir($filepath)) {
