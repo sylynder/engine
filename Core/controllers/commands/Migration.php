@@ -70,6 +70,13 @@ class Migration extends ConsoleController
 	 */
 	private $migration;
 
+	/**
+	 * Schema Directory Exports
+	 *
+	 * @var string
+	 */
+	private $schemaExportDirectory = 'schema-exports';
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -440,7 +447,7 @@ class Migration extends ConsoleController
 				echo $this->success("\t$file done".PHP_EOL);
 	
 				$elapsedTime = round(microtime(true) - $startTime, 3) * 1000;
-
+	
 				echo $this->warning("\tTook $elapsedTime ms to run migrations", 1);
 	
 			} catch (\Exception $e) {
@@ -450,6 +457,83 @@ class Migration extends ConsoleController
 
 	}
 
+	/**
+	 * Export Migrated Schema As SQL
+	 * 
+	 * @param string $name
+	 * @param string $removeTables
+	 * @return void
+	 */
+	public function exportSchema($name = null, $removeTables = null)
+	{
+
+		$tables = $this->db->list_tables();
+
+		if ($name === null) {
+			echo $this->error("\tName cannot be empty please provide a name for file to be exported", 1);
+			exit;
+		}
+
+		if ($removeTables != null) {
+			$removeTables = str_replace('__', ',', $removeTables);
+			$removeTables = explode(',', $removeTables);
+			$tables = array_diff($tables, $removeTables);
+		}
+
+		$webbyVersion = WEBBY_VERSION;
+		$appUrl = base_url();
+		$dateGenerated = date('M d, Y') .' at '. date('H:i A');
+		$phpVersion = PHP_VERSION;
+
+		$desc = <<<DESC
+			-- Webby Schema Dump
+			-- Version: {$webbyVersion}
+			--
+			-- App Url: {$appUrl}
+			-- Generation Time: {$dateGenerated}
+			-- PHP Version: $phpVersion
+
+			SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+			START TRANSACTION;
+			SET time_zone = "+00:00";
+		DESC;
+
+		$content = $desc;
+		$content .= "\r\n";
+
+		$filepath = ROOTPATH .'database'. DS . $this->schemaExportDirectory . DS;
+		$filename = '';
+
+		if ($tables) {
+			foreach ($tables as $table) {
+				$content .= "\r\n";
+                $content .= 'DROP TABLE IF EXISTS `' . $table . '`;';
+                $content .= "\r\n\n";
+                $content .= $this->db->query('SHOW CREATE TABLE ' . $table)->row_array()['Create Table'] . ';';
+                $content .= "\r\n";
+			}
+
+			$filename = $name . "-schema.sql";
+		}
+
+		if (!is_dir($filepath)) {
+			mkdir($filepath, 0775);
+		}
+
+		$this->load->helper('file');
+		$saved = write_file($filepath . $filename, $content);
+
+		if ($saved) {
+			echo $this->success("\n\tDatabase Schema ", 0). $this->info("[".$filename."]", 0). $this->success(" Exported successfully\n", 1);
+			exit;
+		}
+
+		if ($saved) {
+			echo $this->error("\n\tDatabase Schema ", 0). $this->info("[".$filename."]",0). $this->error(" Was Not Exported\n", 1);
+			exit;
+		}
+		
+	}
 
 	/**
      * Truncate Migrations Table
