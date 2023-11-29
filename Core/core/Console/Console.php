@@ -889,6 +889,29 @@ class Console
             exit;
         }
 
+        if ($key === '--export-schema' || $key === '--xs') {
+
+            $removeTables = '';
+            $filename = date('Y-m-d-His');
+
+            $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
+
+            if (isset($args[1]) && isset($steps[0])) {
+                $filename = ($steps[1]) ?: $filename;
+                $command = Console::phpCommand() . 'migration/exportSchema/'.$filename;
+            }
+
+            if (isset($args[2]) && !empty($args[2])) {
+                $list = explode('=', $args[2]);
+                $removeTables = str_replace(',','__', $list[1]);
+                $filename = $steps[1];
+                $command = Console::phpCommand() . 'migration/exportSchema/'.$filename.'/'.$removeTables;
+            }
+            
+            static::runSystemCommand($command);
+            exit;
+        }
+
         if ($key != null ) {
             $steps = explode('=', $key);
         }
