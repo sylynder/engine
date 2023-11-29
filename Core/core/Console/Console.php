@@ -912,6 +912,22 @@ class Console
             exit;
         }
 
+        if ($key === '--dump-database' || $key === '--dd') {
+            
+            $name = date('Y-m-d-His');
+
+            $command = Console::phpCommand() . 'migration/dumpDb/'.$name;
+
+            if (isset($args[1]) && !empty($args[1])) {
+                $step = explode('=', $args[1]);
+                $name = $step[1];
+                $command = Console::phpCommand() . 'migration/dumpDb/'.$name;
+            }
+
+            static::runSystemCommand($command);
+            exit;
+        }
+
         if ($key != null ) {
             $steps = explode('=', $key);
         }
