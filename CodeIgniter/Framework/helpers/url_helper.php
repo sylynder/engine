@@ -526,11 +526,15 @@ if ( ! function_exists('redirect')) {
 	 * @param	string	$method	Redirect method
 	 *			'auto', 'location' or 'refresh'
 	 * @param	int	$code	HTTP Response status code
-	 * @return	void
+	 * @return	void|object
 	 */
 	function redirect($uri = '', $method = 'auto', $code = null)
 	{
 		$raw_uri = $uri;
+
+		if(empty($uri)) {
+			return new \Base\Route\Route;
+		}
 
 		if (strstr($uri, '.')) {
 			$uri = str_replace('.', '/', $uri);
