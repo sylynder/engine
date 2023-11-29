@@ -123,7 +123,7 @@ class Migration extends ConsoleController
 	private function migrationRequirements() 
 	{
 		if (!self::ENABLED) {
-			echo $this->error("Migrations is currently disabled, please enable it to continue...");
+			echo $this->error("\tMigrations is currently disabled, please enable it to continue...");
 			exit;
 		}
 
@@ -312,7 +312,8 @@ class Migration extends ConsoleController
      *
      * @return void
      */
-	public function index() {
+	public function index()
+	{
 		$this->run();
 	}
 
@@ -322,7 +323,8 @@ class Migration extends ConsoleController
      * @param integer $step
      * @return void
      */
-	public function run($step = 0) {
+	public function run($step = 0)
+	{
 
 		$lastMigrationFile = array_search($this->previousMigration, $this->migrationFiles);
 
@@ -335,7 +337,7 @@ class Migration extends ConsoleController
 		}
 
 		if (!$this->migrationFiles) {
-			echo $this->error("No Migration File Available To Run");
+			echo $this->error("\n\tNo Migration File Available To Run\n");
 			exit;
 		}
 
@@ -353,13 +355,13 @@ class Migration extends ConsoleController
 
 			foreach ($this->migrationFiles as $count => $file) {
 
-				echo $this->info("Processing $file");
+				echo $this->info("\tProcessing $file");
 
 				$this->prepareUpMigration($file);
 
 				$this->db->insert(self::TABLE, ['migration' => $file, 'batch' => $batch]);
 
-				echo $this->success("$file done".PHP_EOL);
+				echo $this->success("\t$file done".PHP_EOL);
 
 				if ($step && ($count + 1) >= $step) {
 					break;
@@ -369,7 +371,7 @@ class Migration extends ConsoleController
 
 			$elapsedTime = round(microtime(true) - $startTime, 3) * 1000;
 
-			echo $this->warning("Took $elapsedTime ms to run migrations", 1);
+			echo $this->warning("\tTook $elapsedTime ms to run migrations", 1);
 
 		} catch (\Exception $e) {
 			exit("Error: ".$e->getMessage().PHP_EOL);
@@ -661,7 +663,7 @@ class Migration extends ConsoleController
     public function truncate($database = '')
     {
 		$this->db->truncate(self::TABLE);
-        echo $this->success("Migration table truncated successfully");
+        echo $this->success("\n\tMigration table truncated successfully\n");
     }
 
     /**
@@ -672,7 +674,7 @@ class Migration extends ConsoleController
     public function reset()
     {
         if ($this->previousMigration == null) {
-            echo $this->warning('No Migrations To Reset');
+            echo $this->warning("\n\tNo Migrations To Reset\n");
             exit;
         }
 
@@ -680,7 +682,7 @@ class Migration extends ConsoleController
             $this->rollback(INF); // infinity
         }
 
-		echo $this->warning("Migration has been reset to initial state successfully");
+        echo $this->warning("\n\tMigration has been reset to initial state successfully\n");
     }
 
     /**
@@ -694,7 +696,7 @@ class Migration extends ConsoleController
 		$previousMigrations = $this->executedMigrations();
 
 		if (!$previousMigrations) {
-			echo $this->warning("No Migrations To Rollback");
+			echo $this->warning("\n\tNo Migrations To Rollback\n");
 			exit;
 		}
 
@@ -710,13 +712,13 @@ class Migration extends ConsoleController
 
 				if ($exists) {
 
-					echo $this->info("Rolling back $file");
+					echo $this->info("\n\tRolling back $file\n");
 
 					$this->prepareDownMigration($file);
 				
 					$this->db->delete(self::TABLE, ['migration' => $migration->migration]);
 					
-					echo $this->success("$file done".PHP_EOL);
+					echo $this->success("\n\t$file done".PHP_EOL);
 				}
 
 				if ($step && ($count + 1) >= $step) {
@@ -726,7 +728,7 @@ class Migration extends ConsoleController
 
 			$elapsedTime = round(microtime(true) - $startTime, 3) * 1000;
             
-			echo $this->warning("Took $elapsedTime ms to rollback migrations");
+			echo $this->warning("\n\tTook $elapsedTime ms to rollback migrations\n");
 
 		} catch (\Exception $e) {
 			exit("Error: ".$e->getMessage().PHP_EOL);
@@ -738,7 +740,8 @@ class Migration extends ConsoleController
      *
      * @return void
      */
-	public function status() {
+	public function status()
+	{
 
 		$list = implode(PHP_EOL, array_map(
 			function($migration) { return $migration->run_at.' '.$migration->migration; },
@@ -751,10 +754,10 @@ class Migration extends ConsoleController
 
         if ($list) {
             
-            $output = $this->info("\nMigrations Used", 2);
-            $output .= $this->warning($list, 2);
+            $output = $this->info("\n\tMigrations Used", 2);
+            $output .= $this->warning("$list", 2);
         } else {
-            $output .= $this->warning('No Migrations Staged Yet');
+            $output .= $this->warning("\n\tNo Migrations Staged Yet\n");
         }
 
 		echo $output;
@@ -773,18 +776,18 @@ class Migration extends ConsoleController
 
 		$this->output->set_header('Content-type: text/plain');
         
-		if (!$migration) {
-			echo $output = $this->warning('No Current Migration Available');
-			exit; 
-		 }
+        if (!$migration) {
+           echo $output = $this->warning("\n\tNo Current Migration Available\n");
+           exit; 
+        }
 
 		$list = $migration->run_at.' '.$migration->migration;
 
-		if ($list) {
-            $output = $this->info("\nLatest Migration", 2);
-            $output .= $this->warning($list, 2);
+        if ($list) {
+            $output = $this->info("\n\tLatest Migration", 2);
+            $output .= $this->warning("\t{$list}", 2);
         } else {
-            $output .= $this->warning('No Migrations Staged Yet');
+            $output .= $this->warning("\n\tNo Migrations Staged Yet\n");
         }
 
 		echo $output;
@@ -811,10 +814,10 @@ class Migration extends ConsoleController
         $output = '';
 
         if ($this->migrationFiles) {
-            $output = $this->info("\nAvailable Migrations To Run", 2);
+            $output = $this->info("\n\tAvailable Migrations To Run", 2);
             $output .= $this->warning(implode(PHP_EOL, $this->migrationFiles), 2);
         } else {
-            $output = $this->warning("All Migrations Executed Already");
+            $output = $this->warning("\n\tAll Migrations Executed Already\n");
         }
       
         echo $output;
