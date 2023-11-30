@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * @link		https://codeigniter.com/userguide3/general/controllers.html
  */
 #[AllowDynamicProperties]
-class CI_Controller {
+class CI_Controller extends stdClass {
 
 	/**
 	 * Reference to the CI singleton
@@ -85,7 +85,7 @@ class CI_Controller {
 	 *
 	 * @var	CI_Output
 	 */
-	public $response;
+	public $response;	
 
 	/**
 	 * Class constructor
