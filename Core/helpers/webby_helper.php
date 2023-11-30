@@ -50,6 +50,80 @@ if ( ! function_exists('unique_id'))
     }
 }
 
+/* ----------------------------- Polyfill Functions ---------------------------------*/
+
+if ( ! function_exists('utf8_encode')) 
+{
+    /**
+     * A function to restore utf8_encode
+     * 
+     * @param string $string
+     * @return string
+     */
+    function utf8_encode($string, $as_obsolete = false)
+    {
+        if (!$as_obsolete) {
+            return mb_convert_encoding($string, 'UTF-8');
+        }
+
+        $string .= $string;
+        $length = \strlen($string);
+
+        for ($i = $length >> 1, $j = 0; $i < $length; ++$i, ++$j) {
+            switch (true) {
+                case $string[$i] < "\x80": $string[$j] = $string[$i]; break;
+                case $string[$i] < "\xC0": $string[$j] = "\xC2"; $string[++$j] = $string[$i]; break;
+                default: $string[$j] = "\xC3"; $string[++$j] = \chr(\ord($string[$i]) - 64); break;
+            }
+        }
+
+        return substr($string, 0, $j);
+    }
+}
+
+if ( ! function_exists('utf8_decode')) 
+{
+    /**
+     * A function to restore utf8_decode
+     *
+     * @param string $string
+     * @return string
+     */
+    function utf8_decode($string, $as_obsolete = false)
+    {
+        if (!$as_obsolete) {
+             return mb_convert_encoding($string, 'ISO-8859-1', 'UTF-8');
+        }
+
+        $string = (string) $string;
+        $length = \strlen($string);
+
+        for ($i = 0, $j = 0; $i < $length; ++$i, ++$j) {
+            switch ($string[$i] & "\xF0") {
+                case "\xC0":
+                case "\xD0":
+                    $c = (\ord($string[$i] & "\x1F") << 6) | \ord($string[++$i] & "\x3F");
+                    $string[$j] = $c < 256 ? \chr($c) : '?';
+                    break;
+
+                case "\xF0":
+                    ++$i;
+                    // no break
+
+                case "\xE0":
+                    $string[$j] = '?';
+                    $i += 2;
+                    break;
+
+                default:
+                    $string[$j] = $string[$i];
+            }
+        }
+
+        return substr($string, 0, $j);
+    }
+}
+
 /* ------------------------------- Config Functions ---------------------------------*/
 
 if ( ! function_exists('config')) 
