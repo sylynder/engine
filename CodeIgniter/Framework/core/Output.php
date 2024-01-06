@@ -503,6 +503,24 @@ class CI_Output
 	// --------------------------------------------------------------------
 
 	/**
+     * Return an instance with the provided value replacing the specified header.
+     *
+     * While header names are case-insensitive, the casing of the header will
+     * be preserved by this function, and returned from getHeaders().
+     *
+     *
+     * @param string $name Case-insensitive header field name.
+     * @param string|string[] $value Header value(s).
+     * @return static
+     */
+    public function withHeader($name, $value)
+    {
+        $this->setHeader("{$name}: {$value}");
+        
+        return $this;
+    }
+
+	/**
      * Return an instance with the specified header appended with the given value.
      *
      * Existing values for the specified header will be maintained. The new
@@ -517,7 +535,7 @@ class CI_Output
      */
     public function withAddedHeader($name, $value)
     {
-        $this->set_header("{$name}: {$value}");
+        $this->withHeader($name, $value);
         
         return $this;
     }
