@@ -165,14 +165,29 @@ if ( ! function_exists('is'))
 			return get_instance()->input->is_ajax_request();
 		}
 
+		if ($key == 'get')
+		{
+			return (get_instance()->input->server('REQUEST_METHOD') === 'GET');
+		}
+
 		if ($key == 'post')
 		{
 			return (get_instance()->input->server('REQUEST_METHOD') === 'POST');
 		}
 
-		if ($key == 'get')
+		if ($key == 'put')
 		{
-			return (get_instance()->input->server('REQUEST_METHOD') === 'GET');
+			return (get_instance()->input->server('REQUEST_METHOD') === 'PUT');
+		}
+
+		if ($key == 'patch')
+		{
+			return (get_instance()->input->server('REQUEST_METHOD') === 'PATCH');
+		}
+
+		if ($key == 'delete')
+		{
+			return (get_instance()->input->server('REQUEST_METHOD') === 'DELETE');
 		}
 
 		if ($key == 'loaded' OR $key == 'load')
