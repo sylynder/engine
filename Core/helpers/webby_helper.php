@@ -1330,13 +1330,16 @@ if ( ! function_exists('is_json'))
      * Check if string is json
      * Mostly string should be a json string
      * 
-     * 
      * @param string $string
      * @return bool
      */
-    function is_json($string)
+    function is_json(string $json, int $depth = 512, int $flag = 0)
     {
-        json_decode($string);
+        if (is_php('8.3')) {
+            return json_validate($json, $depth, $flag);
+        }
+
+        json_decode($json);
         return json_last_error() === JSON_ERROR_NONE;
     }
 }
