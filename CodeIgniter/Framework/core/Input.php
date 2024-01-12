@@ -1252,6 +1252,16 @@ class CI_Input
 		return $this->isAjaxRequest();
 	}
 
+    /**
+     * Checks request type.
+     *
+     * @param string $type HTTP verb
+	*/
+    public function is(string $type): bool
+    {
+        return is($type); // is() function from Common.php
+    }
+
 	// --------------------------------------------------------------------
 
 	/**
