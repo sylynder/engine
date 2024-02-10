@@ -76,11 +76,26 @@ class Base_Router extends MX_Router
                 while (false !== ($entry = readdir($handle))) {
                     if ($entry != "." && $entry != "..") {
                         if (is_dir($key . $entry)) {
+
+                            // Use route in modules config directory
                             $rfile = Modules::find('Routes' . EXT, $entry, 'Config/');
 
                             if ($rfile[0]) {
                                 include($rfile[0] . $rfile[1]);
                             }
+
+                            // Use route types and their corresponding file names in modules routes directory
+                            $routeTypes = ['Routes/Web' . EXT, 'Routes/Api' . EXT, 'Routes/Console' . EXT];
+
+                            // Loop through route types and include corresponding files if found
+                            foreach ($routeTypes as $routeType) {
+                                $routeFile = Modules::find(basename($routeType), $entry, 'Routes/'); // dirname($routeType) . '/'
+
+                                if ($routeFile[0]) {
+                                    include $routeFile[0] . $routeFile[1];
+                                }
+                            }
+
                         }
                     }
                 }
