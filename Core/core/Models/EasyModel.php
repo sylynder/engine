@@ -1604,11 +1604,11 @@ class EasyModel extends Model
     /**
      * Limit function
      *
-     * @param mixed $value
-     * @param string $offset
+     * @param int $value
+     * @param int $offset
      * @return CI_DB_query_builder
      */
-    public function limit($value, $offset = '')
+    public function limit($value, $offset = 0)
     {
         $this->db->limit($value, $offset);
         return $this;
